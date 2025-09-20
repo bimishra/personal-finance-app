@@ -2,6 +2,8 @@ package dev.bimishra.finance.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -10,7 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Table(name = "identity_links", schema = "finance_schema")
+@Table(name = "identity_links")
 public class IdentityLink {
     @Id
     private UUID id;
@@ -25,12 +27,12 @@ public class IdentityLink {
     @Column(nullable = false)
     private String subject;
 
-    @Column(nullable = false, updatable = false,
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
-    @Column(nullable = false,
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @UpdateTimestamp
+    @Column(nullable = false)
     private Instant updatedAt;
 
     @PrePersist

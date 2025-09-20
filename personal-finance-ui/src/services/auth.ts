@@ -1,32 +1,33 @@
 import { createAuth0Client } from '@auth0/auth0-spa-js'
-import type { Auth0Client, PopupLoginOptions } from '@auth0/auth0-spa-js'
+import type { Auth0Client } from '@auth0/auth0-spa-js'
 
 const domain = import.meta.env.VITE_AUTH0_DOMAIN as string
 const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID as string
 const audience = import.meta.env.VITE_AUTH0_AUDIENCE as string
 const redirectUri = window.location.origin + '/callback'
 
-//const domain = import.meta.env.VITE_AUTH0_DOMAIN as string
-//const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID as string
-//const audience = import.meta.env.VITE_AUTH0_AUDIENCE as string
-//const redirectUri = window.location.origin + '/callback'
-
-
 let auth0Client: Auth0Client | null = null
 
 export async function initAuth(): Promise<void> {
   if (auth0Client) return
-  auth0Client = await createAuth0Client({
-    domain,
-    clientId: clientId,
-    authorizationParams: {
-      audience,
-      redirect_uri: redirectUri
-    },
-    // Use refresh tokens for better UX (enable in Auth0 dashboard)
-    useRefreshTokens: true,
-    cacheLocation: 'memory' // for demo; for production consider rotating refresh tokens & httpOnly cookie for refresh
-  })
+  
+  try {
+    auth0Client = await createAuth0Client({
+      domain,
+      clientId: clientId,
+      authorizationParams: {
+        audience,
+        redirect_uri: redirectUri,
+        scope: 'openid profile email'
+      },
+      // Use refresh tokens for better UX (enable in Auth0 dashboard)
+      useRefreshTokens: true,
+      cacheLocation: 'memory' // Use memory instead of localStorage to avoid state issues
+    })
+  } catch (e) {
+    console.error('Auth initialization error:', e)
+    throw e
+  }
 }
 
 export async function loginRedirect(): Promise<void> {
@@ -36,38 +37,132 @@ export async function loginRedirect(): Promise<void> {
 
 export async function handleRedirectCallback(): Promise<{ appState?: any }> {
   if (!auth0Client) await initAuth()
-  const result = await auth0Client!.handleRedirectCallback()
-  return result
+  
+  try {
+    // Check if we're already authenticated (callback might have been processed already)
+    const isAuth = await auth0Client!.isAuthenticated()
+    if (isAuth) {
+      console.log('User already authenticated, skipping callback processing')
+      return { appState: null }
+    }
+    
+    const result = await auth0Client!.handleRedirectCallback()
+    return result
+  } catch (e) {
+    console.error('Callback error:', e)
+    
+    // If it's an "Invalid state" error, it might mean the callback was already processed
+    const errorMessage = e instanceof Error ? e.message : String(e)
+    if (errorMessage.includes('Invalid state')) {
+      console.log('Invalid state error - checking if user is already authenticated')
+      try {
+        const isAuth = await auth0Client!.isAuthenticated()
+        if (isAuth) {
+          console.log('User is authenticated despite invalid state error')
+          return { appState: null }
+        }
+      } catch (checkError) {
+        console.error('Error checking authentication status:', checkError)
+      }
+    }
+    
+    throw e
+  }
 }
 
 export async function logout(): Promise<void> {
-  if (!auth0Client) await initAuth()
-  auth0Client!.logout({ logoutParams: { returnTo: window.location.origin } })
+  try {
+    if (!auth0Client) {
+      await initAuth()
+    }
+
+    // Clear all local storage and session storage first
+    localStorage.clear()
+    sessionStorage.clear()
+    
+    // Use the proper logout URL format for Auth0
+    const logoutUrl = `https://${domain}/v2/logout?client_id=${clientId}&returnTo=${encodeURIComponent(window.location.origin)}`
+    
+    // Redirect to Auth0 logout URL
+    window.location.href = logoutUrl
+
+  } catch (e) {
+    console.error('Logout error:', e)
+    // If Auth0 logout fails, at least clear the local state and redirect
+    auth0Client = null
+    window.location.href = window.location.origin
+  }
 }
 
 export async function getAccessToken(): Promise<string | undefined> {
   if (!auth0Client) await initAuth()
+  
   try {
-    const token = await auth0Client!.getTokenSilently()
-    return token
-  } catch (e) {
-    // fallback to getTokenWithPopup (not ideal for prod)
-    try {
-      const token = await auth0Client!.getTokenWithPopup()
-      return token
-    } catch (err) {
-      console.error('Token error', err)
+    const isAuthenticated = await auth0Client!.isAuthenticated()
+    if (!isAuthenticated) {
       return undefined
     }
+
+    return await auth0Client!.getTokenSilently({
+      authorizationParams: {
+        audience,
+        scope: 'openid profile email'
+      },
+      timeoutInSeconds: 10
+    })
+  } catch (e) {
+    console.error('Token error:', e)
+    return undefined
   }
 }
 
 export async function getUser(): Promise<any | undefined> {
   if (!auth0Client) await initAuth()
-  return await auth0Client!.getUser()
+  
+  try {
+    const isAuthenticated = await auth0Client!.isAuthenticated()
+    if (!isAuthenticated) {
+      return undefined
+    }
+    
+    return await auth0Client!.getUser()
+  } catch (e) {
+    console.error('Error getting user:', e)
+    return undefined
+  }
 }
 
-export function getToken(): string | null {
-  // Implement your logic to retrieve the token, e.g. from localStorage
-  return localStorage.getItem('token');
+// Check if the user is authenticated
+export async function isAuthenticated(): Promise<boolean> {
+  if (!auth0Client) await initAuth()
+  return auth0Client!.isAuthenticated()
+}
+
+// Check if the user has a valid session
+export async function checkSession(): Promise<boolean> {
+  if (!auth0Client) await initAuth()
+  
+  try {
+    return await auth0Client!.isAuthenticated()
+  } catch (e) {
+    console.error('Session check error:', e)
+    return false
+  }
+}
+
+// Clear Auth0 state completely (for debugging)
+export function clearAuthState(): void {
+  try {
+    localStorage.clear()
+    sessionStorage.clear()
+    auth0Client = null
+    console.log('Auth0 state cleared')
+  } catch (e) {
+    console.error('Error clearing auth state:', e)
+  }
+}
+
+// Make debug function available globally for testing
+if (typeof window !== 'undefined') {
+  (window as any).clearAuthState = clearAuthState
 }

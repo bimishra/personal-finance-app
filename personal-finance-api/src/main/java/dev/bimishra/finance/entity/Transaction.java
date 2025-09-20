@@ -4,6 +4,8 @@ package dev.bimishra.finance.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 
 import java.math.BigDecimal;
@@ -40,14 +42,17 @@ public class Transaction {
     private LocalDate txnDate;
 
     private String description;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 10)
     private Transaction.TransactionType type;
 
-    @Column(nullable = false, updatable = false,
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
-    @Column(nullable = false,
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @UpdateTimestamp
+    @Column(nullable = false)
     private Instant updatedAt;
 
     @PrePersist

@@ -2,12 +2,14 @@ package dev.bimishra.finance.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 import java.util.UUID;
 
 @Entity
-@Table(name = "users", schema = "finance_schema")
+@Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -25,10 +27,12 @@ public class User {
     @Column
     private String displayName;
 
-    @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
-    @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @UpdateTimestamp
+    @Column(nullable = false)
     private Instant updatedAt;
 
     @PrePersist

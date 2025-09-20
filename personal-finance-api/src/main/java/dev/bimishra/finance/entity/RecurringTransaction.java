@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -29,9 +31,6 @@ public class RecurringTransaction {
     @Column(name = "category_id", columnDefinition = "uuid")
     private UUID categoryId;
 
-    @Column(name = "cron_pattern")
-    private String cronPattern;
-
     private String frequency;
 
     @Column(name = "next_run_date")
@@ -42,12 +41,12 @@ public class RecurringTransaction {
 
     private Boolean active = Boolean.TRUE;
 
-    @Column(nullable = false, updatable = false,
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
-    @Column(nullable = false,
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @UpdateTimestamp
+    @Column(nullable = false)
     private Instant updatedAt;
 
     @PrePersist

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -44,31 +45,32 @@ public class Account {
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal balance = BigDecimal.ZERO;
 
-    @Column(nullable = false, updatable = false,
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
-    @Column(nullable = false,
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @UpdateTimestamp
+    @Column(nullable = false)
     private Instant updatedAt;
+
 
     @PrePersist
     public void prePersist() {
         if (id == null) {
             id = UUID.randomUUID();
         }
-        if (createdAt == null) {
+        /*if (createdAt == null) {
             createdAt = Instant.now();
         }
         if (updatedAt == null) {
             updatedAt = Instant.now();
-        }
+        }*/
     }
 
-    @PreUpdate
+   /* @PreUpdate
     public void preUpdate() {
         updatedAt = Instant.now();
-    }
+    }*/
 
     public enum AccountType {
         CHECKING, SAVINGS, CREDIT_CARD, INVESTMENT, CASH, LOAN

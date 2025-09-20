@@ -1,3 +1,15 @@
+-- Connect to the correct database (handled externally, but noted for clarity)
+-- \c finance_db
+ALTER SCHEMA public OWNER TO finance_user;
+-- Optionally, drop tables to ensure a clean slate
+DROP TABLE IF EXISTS identity_links CASCADE;
+DROP TABLE IF EXISTS transactions CASCADE;
+DROP TABLE IF EXISTS recurring_transactions CASCADE;
+DROP TABLE IF EXISTS budgets CASCADE;
+DROP TABLE IF EXISTS accounts CASCADE;
+DROP TABLE IF EXISTS categories CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE users (
@@ -32,7 +44,7 @@ CREATE TABLE accounts (
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     name VARCHAR(100) NOT NULL,
     type VARCHAR(20) NOT NULL CHECK (type IN ('CHECKING', 'SAVINGS', 'CREDIT_CARD', 'INVESTMENT', 'CASH', 'LOAN')),
-    currency CHAR(3) NOT NULL,
+    currency VARCHAR(3) NOT NULL,
     balance NUMERIC(12,2) NOT NULL DEFAULT 0,
     updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now()

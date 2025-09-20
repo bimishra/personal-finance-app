@@ -3,6 +3,8 @@ package dev.bimishra.finance.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -22,11 +24,12 @@ public class Category {
     private String type;
     @Column(name = "is_default", nullable = false)
     private boolean defaultCategory = false;
-    @Column(nullable = false, updatable = false,
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private Instant createdAt;
-    @Column(nullable = false,
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+
+    @UpdateTimestamp
+    @Column(nullable = false)
     private Instant updatedAt;
     @PrePersist
     public void prePersist() {

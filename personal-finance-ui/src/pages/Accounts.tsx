@@ -29,7 +29,8 @@ export default function Accounts() {
   const [form, setForm] = useState<Partial<Account>>({
     name: '',
     currency: 'USD',
-    type: 'CHECKING', // default selection
+    type: 'CHECKING',
+    balance: 0 // Initialize balance to avoid uncontrolled input warning
   })
 
   useEffect(() => {
@@ -129,10 +130,11 @@ export default function Accounts() {
             <div className="text-sm text-gray-600">Balance</div>
             <input
               type="number"
-              value={form.balance}
-              onChange={e =>
-                setForm({ ...form, balance: parseFloat(e.target.value) })
-              }
+              value={form.balance || ''}
+              onChange={e => {
+                const value = e.target.value;
+                setForm({ ...form, balance: value === '' ? 0 : parseFloat(value) || 0 });
+              }}
               className="w-full border p-2 rounded mt-1"
             />
           </label>

@@ -2,6 +2,8 @@ package dev.bimishra.finance.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -23,18 +25,18 @@ public class Budget {
 
     private LocalDate month;
 
-    @Column(name = "limit", precision = 12, scale = 2)
+    @Column(name = "limit_amount", precision = 12, scale = 2)
     private BigDecimal limit;
 
     @Column(name = "spent", precision = 12, scale = 2)
     private BigDecimal spent = BigDecimal.ZERO;
 
-    @Column(nullable = false, updatable = false,
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
-    @Column(nullable = false,
-            columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @UpdateTimestamp
+    @Column(nullable = false)
     private Instant updatedAt;
 
     @PrePersist
