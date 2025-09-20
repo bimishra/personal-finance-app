@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { initAuth, loginRedirect, isAuthenticated } from '../services/auth'
+import { initAuth, isAuthenticated } from '../services/auth'
 import { useUser } from '../context/UserContext'
+import LoginModal from '../components/LoginModal'
 
 export default function Login() {
   const navigate = useNavigate()
-  const { isAuthenticated: userIsAuthenticated, isLoading } = useUser()
+  const { isAuthenticated: userIsAuthenticated, isLoading, fetchUser } = useUser()
   const [isInitializing, setIsInitializing] = useState(true)
-  const [isLoggingIn, setIsLoggingIn] = useState(false)
+  const [showLoginModal, setShowLoginModal] = useState(false)
 
   useEffect(() => {
     const init = async () => {
@@ -41,42 +42,38 @@ export default function Login() {
     )
   }
 
-  const handleLogin = async () => {
-    try {
-      setIsLoggingIn(true)
-      await loginRedirect()
-    } catch (error) {
-      console.error('Login error:', error)
-      setIsLoggingIn(false)
-    }
+  const handleLoginClick = () => {
+    setShowLoginModal(true)
+  }
+
+  const handleLoginSuccess = async () => {
+    // Refresh user data after successful login
+    await fetchUser()
+    navigate('/dashboard', { replace: true })
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="text-center bg-white p-8 rounded-lg shadow-md max-w-md w-full mx-4">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome to Personal Finance</h1>
-          <p className="text-gray-600">Manage your finances with ease</p>
+    <>
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="text-center bg-white p-8 rounded-lg shadow-md max-w-md w-full mx-4">
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome to Personal Finance</h1>
+            <p className="text-gray-600">Manage your finances with ease</p>
+          </div>
+          <button
+            onClick={handleLoginClick}
+            className="w-full px-6 py-3 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
+          >
+            Sign in to continue
+          </button>
         </div>
-        <button
-          onClick={handleLogin}
-          disabled={isLoggingIn}
-          className={`w-full px-6 py-3 rounded-lg shadow-md transition-all duration-200 ${
-            isLoggingIn
-              ? 'bg-indigo-400 text-white cursor-not-allowed'
-              : 'bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-lg transform hover:-translate-y-0.5'
-          }`}
-        >
-          {isLoggingIn ? (
-            <div className="flex items-center justify-center gap-2">
-              <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
-              Signing in...
-            </div>
-          ) : (
-            'Sign in to continue'
-          )}
-        </button>
       </div>
-    </div>
+      
+      <LoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        onSuccess={handleLoginSuccess}
+      />
+    </>
   )
 }

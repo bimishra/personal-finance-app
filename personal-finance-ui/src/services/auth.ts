@@ -35,6 +35,15 @@ export async function loginRedirect(): Promise<void> {
   await auth0Client!.loginWithRedirect()
 }
 
+export async function loginWithPopup(): Promise<void> {
+  if (!auth0Client) await initAuth()
+  await auth0Client!.loginWithPopup({
+    authorizationParams: {
+      prompt: 'select_account'
+    }
+  })
+}
+
 export async function handleRedirectCallback(): Promise<{ appState?: any }> {
   if (!auth0Client) await initAuth()
   
