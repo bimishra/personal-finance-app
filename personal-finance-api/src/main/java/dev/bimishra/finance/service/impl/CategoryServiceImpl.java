@@ -32,7 +32,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryDto> findAllForUser(UUID userId) {
-        return repo.findByIsDefaultTrueOrUserIdOrderByName(userId).stream().map(mapper::toDto).collect(Collectors.toList());
+        return repo.findByDefaultCategoryTrueOrUserIdOrderByName(userId).stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
     @Override

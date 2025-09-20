@@ -6,8 +6,8 @@ import dev.bimishra.finance.mapper.AccountMapper;
 import dev.bimishra.finance.entity.Account;
 import dev.bimishra.finance.repository.AccountRepository;
 import dev.bimishra.finance.util.SecurityUtils;
-import jdk.dynalink.linker.LinkerServices;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +16,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AccountServiceImpl implements dev.bimishra.finance.service.AccountService {
 
     private final AccountRepository accountRepository;
@@ -25,7 +26,7 @@ public class AccountServiceImpl implements dev.bimishra.finance.service.AccountS
     @Override
     public List<AccountDto> getUserAccounts() {
         UUID userId = SecurityUtils.getCurrentUserId();
-        System.out.println("Fetching accounts for user: " + userId);
+       log.debug("Fetching accounts for user: {}", userId);
         return accountRepository.findByUserId(userId)
                 .stream()
                 .map(accountMapper::toDto)
@@ -45,8 +46,8 @@ public class AccountServiceImpl implements dev.bimishra.finance.service.AccountS
     public AccountDto createAccount(AccountDto accountDto) {
         Account account = accountMapper.toEntity(accountDto);
         account.setUserId(SecurityUtils.getCurrentUserId());
-        System.out.println("Creating account for user: " + account.getUserId());
-        System.out.println("Account details: " + account);
+        log.info("Creating account for user: {}", account.getUserId());
+        log.debug("Account details: {}", account);
         Account savedAccount = accountRepository.save(account);
         return accountMapper.toDto(savedAccount);
     }

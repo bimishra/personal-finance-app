@@ -8,6 +8,7 @@ import dev.bimishra.finance.mapper.TransactionMapper;
 import dev.bimishra.finance.repository.AccountRepository;
 import dev.bimishra.finance.repository.TransactionRepository;
 import dev.bimishra.finance.service.TransactionService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@Slf4j
 public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository repo;
@@ -57,8 +59,8 @@ public class TransactionServiceImpl implements TransactionService {
         // update account balance (simple logic)
         t.setCurrency(acct.getCurrency());
         t.setUserId(acct.getUserId());
-        System.out.println("Creating transaction: " + t);
-        System.out.println("Type: " + t.getType());
+        log.info("Creating transaction: {}", t);
+        log.debug("Type: {}", t.getType());
         //FIXME: Handle type properly with enum
         if (Transaction.TransactionType.CREDIT == t.getType()) {
             acct.setBalance(acct.getBalance().add(t.getAmount()));

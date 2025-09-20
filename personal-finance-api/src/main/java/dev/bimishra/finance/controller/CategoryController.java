@@ -4,6 +4,7 @@ import dev.bimishra.finance.config.UserPrincipal;
 import dev.bimishra.finance.dto.CategoryDto;
 import dev.bimishra.finance.service.CategoryService;
 import dev.bimishra.finance.util.SecurityUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/categories")
+@Slf4j
 public class CategoryController {
 
     private final CategoryService svc;
@@ -21,12 +23,9 @@ public class CategoryController {
     public CategoryController(CategoryService svc) { this.svc = svc; }
 
     @GetMapping("/v1")
-    public ResponseEntity<List<CategoryDto>> listV1(@AuthenticationPrincipal UserPrincipal principal) {
-        //System.out.println("JWT ID: " + jwt.getId());
-        //System.out.println("JWT claim: " + jwt.getClaims());
-        //System.out.println("JWT email: " + jwt.getClaimAsString("email"));
+    public ResponseEntity<List<CategoryDto>> listV1() {
         UUID userId = SecurityUtils.getCurrentUserId();
-        System.out.println("User ID: " + userId);
+        log.info("User ID: {}", userId);
         return ResponseEntity.ok(svc.listByUser(userId));
     }
 

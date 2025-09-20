@@ -16,23 +16,18 @@ public class Category {
     @Id
     @Column(columnDefinition = "uuid")
     private UUID id;
-
     @Column(name = "user_id", columnDefinition = "uuid", nullable = false)
     private UUID userId;
-
     private String name;
     private String type;
-
-   private boolean isDefault = false;
-
+    @Column(name = "is_default", nullable = false)
+    private boolean defaultCategory = false;
     @Column(nullable = false, updatable = false,
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Instant createdAt;
-
     @Column(nullable = false,
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Instant updatedAt;
-
     @PrePersist
     public void prePersist() {
         if (id == null) {
@@ -45,11 +40,9 @@ public class Category {
             updatedAt = Instant.now();
         }
     }
-
     @PreUpdate
     public void preUpdate() {
         updatedAt = Instant.now();
     }
     public Category() {}
-
 }

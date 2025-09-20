@@ -14,7 +14,6 @@ public class CategoryDto {
     private UUID userId;
     private String name;
     private String type;
-    private UUID parentId;
 
     public CategoryDto(){}
 
