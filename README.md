@@ -35,7 +35,7 @@ It helps you manage **users, accounts, transactions, budgets, categories, and re
 
 Below is a high‑level view of how the **UI**, **API**, and **Database** interact in the Personal Finance Management App:
 
-![Architecture Diagram](docs/architecture-diagram.png)
+![Architecture Diagram](https://github.com/bimishra/personal-finance-app/blob/develop/1.0/docs/architecture-diagram.png)
 
 **Flow:**
 
