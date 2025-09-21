@@ -47,7 +47,14 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/v1/auth/**", "/actuator/health", "/swagger-ui/**", "/v3/api-docs/**", "/public/**").permitAll()
+                        .requestMatchers(
+                                "/api/v1/auth/**",
+                                "/actuator/health/**",
+                                "/actuator/metrics/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/public/**")
+                        .permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

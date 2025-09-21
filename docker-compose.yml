@@ -9,10 +9,10 @@ services:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "5432:5432"
+      - "5433:5432" # Expose PostgreSQL on port 5433 to avoid conflicts
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./sql/:/docker-entrypoint-initdb.d/
+      - ./personal-finance-api/sql/:/docker-entrypoint-initdb.d/
     networks:
       - finance-network
 
@@ -25,11 +25,21 @@ services:
       SPRING_PROFILES_ACTIVE: dev
       DATABASE_URL: jdbc:postgresql://postgres-db:5432/${POSTGRES_DB}
       DB_USERNAME: ${DB_USERNAME}
-      DB_PASSWORD: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
       OAUTH2_AUDIENCE: ${OAUTH2_AUDIENCE}
       OAUTH2_ISSUER_URI: ${OAUTH2_ISSUER_URI}
     ports:
       - "8080:8080"
+    networks:
+      - finance-network
+
+  ui:
+    build: ./personal-finance-ui
+    container_name: finance-ui
+    depends_on:
+      - api
+    ports:
+      - "3000:80" # Expose frontend on port 3000 of host machine
     networks:
       - finance-network
 
