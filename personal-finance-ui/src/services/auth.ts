@@ -6,7 +6,7 @@ const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID as string
 const audience = import.meta.env.VITE_AUTH0_AUDIENCE as string
 const redirectUri = window.location.origin + '/callback'
 
-const popup = window.open('', 'auth0:popup', 'width=500,height=600,left=100,top=100');
+//const popup = window.open('', 'auth0:popup', 'width=500,height=600,left=100,top=100');
 
 let auth0Client: Auth0Client | null = null
 
@@ -47,8 +47,7 @@ export async function loginWithPopup(): Promise<void> {
           prompt: 'select_account',
           screen_hint: 'login'
         }
-      },
-      { popup }
+      }
     )
     
   } catch (error) {
@@ -67,8 +66,7 @@ export async function signupWithPopup(): Promise<void> {
           prompt: 'select_account',
           screen_hint: 'signup'
         }
-      },
-      { popup }
+      }
     )
     
   } catch (error) {

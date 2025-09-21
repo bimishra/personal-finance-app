@@ -1,7 +1,7 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Insert sample data
-INSERT INTO users (id, email, display_name, roles) VALUES
+INSERT INTO users (id, email, display_name) VALUES
 (uuid_generate_v4(), 'user@example.com', 'Demo User' ),
 (uuid_generate_v4(), 'admin@example.com', 'Admin User');
 

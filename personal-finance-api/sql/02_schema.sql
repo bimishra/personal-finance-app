@@ -1,7 +1,4 @@
--- Connect to the correct database (handled externally, but noted for clarity)
--- \c finance_db
-ALTER SCHEMA public OWNER TO finance_user;
--- Optionally, drop tables to ensure a clean slate
+-- Description: Database schema for personal finance management application
 DROP TABLE IF EXISTS identity_links CASCADE;
 DROP TABLE IF EXISTS transactions CASCADE;
 DROP TABLE IF EXISTS recurring_transactions CASCADE;
@@ -32,7 +29,7 @@ CREATE TABLE identity_links (
     updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
     CONSTRAINT identity_links_user_id_fkey
         FOREIGN KEY (user_id)
-        REFERENCES finance_schema.users(id)
+        REFERENCES users(id)
         ON DELETE CASCADE,
     CONSTRAINT identity_links_provider_subject_key
         UNIQUE (provider, subject)
