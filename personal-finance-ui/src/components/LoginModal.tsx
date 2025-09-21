@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { loginWithPopup, loginRedirect } from '../services/auth';
+import { loginWithPopup, loginRedirect, signupWithPopup } from '../services/auth';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -15,11 +15,10 @@ export default function LoginModal({ isOpen, onClose, onSuccess }: LoginModalPro
     try {
       setIsLoading(true);
       setError(null);
-
+  
       // Try popup login first
       try {
         await loginWithPopup();
-        // Close modal and trigger success callback
         onSuccess();
         onClose();
       } catch (popupError) {

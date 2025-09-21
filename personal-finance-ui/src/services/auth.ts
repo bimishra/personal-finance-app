@@ -6,6 +6,8 @@ const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID as string
 const audience = import.meta.env.VITE_AUTH0_AUDIENCE as string
 const redirectUri = window.location.origin + '/callback'
 
+const popup = window.open('', 'auth0:popup', 'width=500,height=600,left=100,top=100');
+
 let auth0Client: Auth0Client | null = null
 
 export async function initAuth(): Promise<void> {
@@ -37,11 +39,42 @@ export async function loginRedirect(): Promise<void> {
 
 export async function loginWithPopup(): Promise<void> {
   if (!auth0Client) await initAuth()
-  await auth0Client!.loginWithPopup({
-    authorizationParams: {
-      prompt: 'select_account'
-    }
-  })
+  
+  try {
+    await auth0Client!.loginWithPopup(
+      {
+        authorizationParams: {
+          prompt: 'select_account',
+          screen_hint: 'login'
+        }
+      },
+      { popup }
+    )
+    
+  } catch (error) {
+    console.error('Popup login failed:', error)
+    throw error
+  }
+}
+
+export async function signupWithPopup(): Promise<void> {
+  if (!auth0Client) await initAuth()
+  
+  try {
+    await auth0Client!.loginWithPopup(
+      {
+        authorizationParams: {
+          prompt: 'select_account',
+          screen_hint: 'signup'
+        }
+      },
+      { popup }
+    )
+    
+  } catch (error) {
+    console.error('Popup signup failed:', error)
+    throw error
+  }
 }
 
 export async function handleRedirectCallback(): Promise<{ appState?: any }> {
