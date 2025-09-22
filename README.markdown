@@ -44,21 +44,22 @@ The application follows a **client-server architecture** with a clear separation
 ### Architecture Diagram
 
 ```mermaid
-graph TD
-    A[Client Browser] -->|HTTP/HTTPS| B[Nginx]
-    B -->|Proxy| C[React + Vite Frontend]
-    C -->|REST API Calls| D[Spring Boot API]
-    D -->|JDBC| E[PostgreSQL Database]
-    D -->|OAuth2/JWT| F[Identity Provider]
-    D -->|Metrics| G[Actuator Endpoints]
-    E -->|SQL Init Scripts| H[Schema: users, accounts, transactions, etc.]
-
-    subgraph Docker Compose
-        B
-        C
-        D
-        E
+flowchart TD
+    subgraph Client [Client Layer]
+        UI[UI<br/>React + Vite<br/>Nginx]
     end
+
+    subgraph Backend [Backend Layer]
+        API[API<br/>Spring Boot]
+    end
+
+    subgraph Database [Database Layer]
+        DB[(PostgreSQL)]
+    end
+
+    UI -->|HTTP| API
+    API -->|JDBC| DB
+
 ```
 
 **Description:**
