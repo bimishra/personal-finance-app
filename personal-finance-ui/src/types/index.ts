@@ -32,13 +32,12 @@ export interface Transaction {
   id: UUID
   accountId: UUID
   userId: UUID
-  categoryId?: UUID | null
+  categoryId?: UUID
   amount: string
   currency: string
   txnDate: string
   description?: string
   type: 'DEBIT' | 'CREDIT'
-  metadata?: Record<string, any>
   createdAt?: string
 }
 

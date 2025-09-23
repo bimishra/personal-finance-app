@@ -88,7 +88,14 @@ public class TransactionServiceImpl implements TransactionService {
     public void delete(UUID id, UUID userId) {
         Transaction existing = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
         if (!existing.getUserId().equals(userId)) throw new ResourceNotFoundException("Transaction not found for user");
-        // For simplicity do not revert account balance here.
+        // revert account balance (simplistic logic)
+        Account acct = accountRepo.findById(existing.getAccountId()).orElseThrow(() -> new ResourceNotFoundException("Account not found"));
+        if (Transaction.TransactionType.DEBIT == existing.getType()) {
+            acct.setBalance(acct.getBalance().add(existing.getAmount()));
+        } else {
+            acct.setBalance(acct.getBalance().subtract(existing.getAmount()));
+        }
+        accountRepo.save(acct);
         repo.deleteById(id);
     }
 }
