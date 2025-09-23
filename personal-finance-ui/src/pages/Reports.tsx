@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import api from '../services/api'
 import { useAppDispatch } from '../state/hooks'
 import dayjs from 'dayjs'
+import { formatCurrency } from '@/utils/currency'
 
 export default function Reports() {
   const [from, setFrom] = useState(dayjs().startOf('month').format('YYYY-MM-DD'))
@@ -26,15 +27,15 @@ export default function Reports() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white p-4 rounded shadow">
             <div className="text-sm text-gray-500">Income</div>
-            <div className="text-2xl font-bold">${summary.income.toFixed(2)}</div>
+            <div className="text-2xl font-bold">{formatCurrency(summary.income, '')}</div>
           </div>
           <div className="bg-white p-4 rounded shadow">
             <div className="text-sm text-gray-500">Expense</div>
-            <div className="text-2xl font-bold">${summary.expense.toFixed(2)}</div>
+            <div className="text-2xl font-bold">{formatCurrency(summary.expense, '')}</div>
           </div>
           <div className="bg-white p-4 rounded shadow">
             <div className="text-sm text-gray-500">Net</div>
-            <div className="text-2xl font-bold">${summary.net.toFixed(2)}</div>
+            <div className="text-2xl font-bold">{formatCurrency(summary.net, '')}</div>
           </div>
         </div>
       )}

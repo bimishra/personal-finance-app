@@ -5,6 +5,7 @@ import { fetchTransactions } from '../state/slices/transactionsSlice'
 import Card from '../components/Card'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import dayjs from 'dayjs'
+import { formatCurrency } from '@/utils/currency'
 
 export default function Dashboard() {
   const dispatch = useAppDispatch()
@@ -27,7 +28,7 @@ export default function Dashboard() {
           <div className="flex gap-6">
             <div className="w-1/3">
               <div className="text-sm text-gray-500">Total Balance</div>
-              <div className="text-2xl font-bold">${totalBalance.toFixed(2)}</div>
+              <div className="text-2xl font-bold">{formatCurrency(totalBalance, '')}</div>
             </div>
             <div className="w-2/3">
               <ResponsiveContainer width="100%" height={200}>
@@ -52,7 +53,7 @@ export default function Dashboard() {
                     <div className="text-sm text-gray-500">{t.txnDate}</div>
                   </div>
                   <div className={`font-semibold ${t.type === 'CREDIT' ? 'text-green-600' : 'text-red-600'}`}>
-                    {t.type === 'CREDIT' ? '+' : '-'}${Number(t.amount).toFixed(2)}
+                    {t.type === 'CREDIT' ? '+' : '-'}{formatCurrency(t.amount, accounts.find(a => a.id === t.accountId)?.currency || 'USD')}
                   </div>
                 </li>
               ))}
@@ -72,7 +73,8 @@ export default function Dashboard() {
                     <div className="text-sm text-gray-500">{a.currency || 'USD'}</div>
                   </div>
                   <div className="text-right">
-                    <div className="font-semibold">${Number(a.balance).toFixed(2)}</div>
+                    {/* Not showing currency symbol here as account currency is shown above */}
+                    <div className="font-semibold">{formatCurrency(a.balance, '')}</div>
                   </div>
                 </div>
               </li>

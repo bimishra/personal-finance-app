@@ -5,6 +5,7 @@ import { useAppSelector, useAppDispatch } from '@/state/hooks'
 import { deleteTransaction, updateTransaction } from '@/state/slices/transactionsSlice'
 import { toast } from 'react-hot-toast'
 import TransactionForm from './TransactionForm'
+import { formatCurrency } from '@/utils/currency'
 
 interface Props {
   transactions: Transaction[]
@@ -17,18 +18,48 @@ export default function TransactionTable({ transactions, onEdit }: Props) {
 
   const [selectedAccount, setSelectedAccount] = useState<string>('ALL')
   const [editingTxn, setEditingTxn] = useState<Transaction | null>(null)
+  const [selectedTxns, setSelectedTxns] = useState<Set<string>>(new Set())
 
   const filteredTxns =
     selectedAccount === 'ALL'
       ? transactions
       : transactions.filter(t => t.accountId === selectedAccount)
 
-  const handleDelete = async (id: string) => {
+  const toggleSelect = (id: string) => {
+    setSelectedTxns(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(id)) newSet.delete(id)
+      else newSet.add(id)
+      return newSet
+    })
+  }
+  
+ const handleDelete = async (id: string) => {
     try {
       await dispatch(deleteTransaction(id)).unwrap()
       toast.success('Transaction deleted successfully')
+      setSelectedTxns(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(id)
+        return newSet
+      })
     } catch (err: any) {
       toast.error(`Failed to delete transaction: ${err.message || err}`)
+    }
+  }
+
+  const handleBulkDelete = async () => {
+    if (!selectedTxns.size) return
+    if (!confirm(`Delete ${selectedTxns.size} selected transactions?`)) return
+    const ids = Array.from(selectedTxns)
+    try {
+      for (const id of ids) {
+        await dispatch(deleteTransaction(id)).unwrap()
+      }
+      toast.success(`${ids.length} transactions deleted successfully`)
+      setSelectedTxns(new Set())
+    } catch (err: any) {
+      toast.error(`Failed to delete some transactions: ${err.message || err}`)
     }
   }
 
@@ -44,7 +75,7 @@ export default function TransactionTable({ transactions, onEdit }: Props) {
 
   return (
     <div className="bg-white rounded shadow">
-      {/* Filter bar */}
+      {/* Filter & Bulk Delete */}
       <div className="flex justify-between items-center p-3 border-b bg-gray-50">
         <label className="flex items-center gap-2 text-sm text-gray-600">
           <span>Filter by Account:</span>
@@ -61,12 +92,30 @@ export default function TransactionTable({ transactions, onEdit }: Props) {
             ))}
           </select>
         </label>
+        <button
+          className="bg-red-600 text-white px-3 py-1 rounded disabled:opacity-50"
+          onClick={handleBulkDelete}
+          disabled={selectedTxns.size === 0}
+        >
+          Delete Selected
+        </button>
       </div>
 
       {/* Table */}
-      <table className="min-w-full">
+      <table className="min-w-full table-fixed">
         <thead>
           <tr className="bg-gray-50">
+            <th className="px-3 py-2 text-center w-10">
+              <input
+                type="checkbox"
+                className="align-middle"
+                checked={selectedTxns.size === filteredTxns.length && filteredTxns.length > 0}
+                onChange={e => {
+                  if (e.target.checked) setSelectedTxns(new Set(filteredTxns.map(t => t.id)))
+                  else setSelectedTxns(new Set())
+                }}
+              />
+            </th>
             <th className="px-3 py-2 text-left">Date</th>
             <th className="px-3 py-2 text-left">Account</th>
             <th className="px-3 py-2 text-left">Description</th>
@@ -77,6 +126,14 @@ export default function TransactionTable({ transactions, onEdit }: Props) {
         <tbody>
           {filteredTxns.map(t => (
             <tr key={t.id} className="border-t">
+              <td className="px-3 py-2 text-center">
+                <input
+                  type="checkbox"
+                  className="align-middle"
+                  checked={selectedTxns.has(t.id)}
+                  onChange={() => toggleSelect(t.id)}
+                />
+              </td>
               <td className="px-3 py-2">{t.txnDate}</td>
               <td className="px-3 py-2">
                 {accounts.find(a => a.id === t.accountId)?.name || '—'}
@@ -87,8 +144,8 @@ export default function TransactionTable({ transactions, onEdit }: Props) {
                   t.type === 'CREDIT' ? 'text-green-600' : 'text-red-600'
                 }`}
               >
-                {t.type === 'CREDIT' ? '+' : '-'}$
-                {Number(t.amount).toFixed(2)}
+                {t.type === 'CREDIT' ? '+' : '-'}
+                {formatCurrency(t.amount, accounts.find(a => a.id === t.accountId)?.currency || 'USD')}
               </td>
               <td className="px-3 py-2 flex gap-2">
                 <button
@@ -110,7 +167,7 @@ export default function TransactionTable({ transactions, onEdit }: Props) {
             <tr>
               <td
                 className="px-3 py-4 text-center text-gray-500"
-                colSpan={5}
+                colSpan={6}
               >
                 No transactions found
               </td>

@@ -4,6 +4,7 @@ import { fetchAccounts, createAccount } from '../state/slices/countSlice'
 import Card from '../components/Card'
 import Modal from '../components/Modal'
 import { Account } from '../types'
+import { formatCurrency, getCurrencySymbol, CURRENCIES } from '@/utils/currency'
 
 // keep enum values in sync with backend
 const ACCOUNT_TYPES = [
@@ -14,13 +15,6 @@ const ACCOUNT_TYPES = [
   'CASH',
   'LOAN',
 ]
-
-const CURRENCIES = ['INR', 'USD', 'GBP']
-const CURRENCY_SYMBOLS: Record<string, string> = {
-  INR: '₹',
-  USD: '$',
-  GBP: '£',
-}
 
 export default function Accounts() {
   const dispatch = useAppDispatch()
@@ -76,8 +70,7 @@ export default function Accounts() {
                 <td className="px-3 py-2">{a.type}</td>
                 <td className="px-3 py-2">{a.currency}</td>
                 <td className="px-3 py-2">
-                    {CURRENCY_SYMBOLS[a.currency || 'USD']}
-                    {Number(a.balance).toFixed(2)}
+                   {formatCurrency(a.balance, a?.currency || 'USD')}
                 </td>
               </tr>
             ))}
@@ -120,7 +113,7 @@ export default function Accounts() {
             >
               {CURRENCIES.map(c => (
                 <option key={c} value={c}>
-                  {c} ({CURRENCY_SYMBOLS[c]})
+                  {c} ({getCurrencySymbol(c)})
                 </option>
               ))}
             </select>
