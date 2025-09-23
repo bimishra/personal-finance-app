@@ -1,5 +1,7 @@
 export type UUID = string
 
+
+
 export interface User {
   id: UUID
   email: string
@@ -21,7 +23,9 @@ export interface Category {
   userId: UUID
   name: string
   type: 'INCOME' | 'EXPENSE'
-  parentId?: UUID | null
+  defaultCategory: boolean
+  createdAt?: string
+  updatedAt?: string
 }
 
 export interface Transaction {

@@ -6,6 +6,7 @@ import dev.bimishra.finance.exception.ResourceNotFoundException;
 import dev.bimishra.finance.mapper.CategoryMapper;
 import dev.bimishra.finance.repository.CategoryRepository;
 import dev.bimishra.finance.service.CategoryService;
+import dev.bimishra.finance.util.SecurityUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,17 +27,20 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryDto> listByUser(UUID userId) {
+    public List<CategoryDto> listByUser() {
+        UUID userId = SecurityUtils.getCurrentUserId();
         return repo.findByUserId(userId).stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
     @Override
-    public List<CategoryDto> findAllForUser(UUID userId) {
+    public List<CategoryDto> findAllForUser() {
+        UUID userId = SecurityUtils.getCurrentUserId();
         return repo.findByDefaultCategoryTrueOrUserIdOrderByName(userId).stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
     @Override
-    public CategoryDto get(UUID id, UUID userId) {
+    public CategoryDto get(UUID id) {
+        UUID userId = SecurityUtils.getCurrentUserId();
         Category c = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         if (!c.getUserId().equals(userId)) throw new ResourceNotFoundException("Category not found for user");
         return mapper.toDto(c);
@@ -45,12 +49,13 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto create(CategoryDto dto) {
         Category e = mapper.toEntity(dto);
-        if (e.getId() == null) e.setId(UUID.randomUUID());
+        e.setUserId(SecurityUtils.getCurrentUserId());
         return mapper.toDto(repo.save(e));
     }
 
     @Override
-    public CategoryDto update(UUID id, CategoryDto dto, UUID userId) {
+    public CategoryDto update(UUID id, CategoryDto dto) {
+        UUID userId = SecurityUtils.getCurrentUserId();
         Category existing = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         if (!existing.getUserId().equals(userId)) throw new ResourceNotFoundException("Category not found for user");
         existing.setName(dto.getName());
@@ -59,7 +64,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void delete(UUID id, UUID userId) {
+    public void delete(UUID id) {
+        UUID userId = SecurityUtils.getCurrentUserId();
         Category existing = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         if (!existing.getUserId().equals(userId)) throw new ResourceNotFoundException("Category not found for user");
         repo.deleteById(id);

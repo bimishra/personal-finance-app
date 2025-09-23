@@ -3,7 +3,6 @@ package dev.bimishra.finance.controller;
 import dev.bimishra.finance.config.UserPrincipal;
 import dev.bimishra.finance.dto.CategoryDto;
 import dev.bimishra.finance.service.CategoryService;
-import dev.bimishra.finance.util.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,39 +23,33 @@ public class CategoryController {
 
     @GetMapping("/v1")
     public ResponseEntity<List<CategoryDto>> listV1() {
-        UUID userId = SecurityUtils.getCurrentUserId();
-        log.info("User ID: {}", userId);
-        return ResponseEntity.ok(svc.listByUser(userId));
+        return ResponseEntity.ok(svc.listByUser());
     }
 
     @GetMapping
     public ResponseEntity<List<CategoryDto>> list() {
-        return ResponseEntity.ok(svc.findAllForUser(SecurityUtils.getCurrentUserId()));
+        return ResponseEntity.ok(svc.findAllForUser());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryDto> get(@PathVariable UUID id, @AuthenticationPrincipal UserPrincipal principal) {
-        UUID userId = SecurityUtils.getCurrentUserId();
-        return ResponseEntity.ok(svc.get(id, userId));
+    public ResponseEntity<CategoryDto> get(@PathVariable UUID id) {
+        return ResponseEntity.ok(svc.get(id));
     }
 
     @PostMapping
     public ResponseEntity<CategoryDto> create(@RequestBody CategoryDto dto, @AuthenticationPrincipal UserPrincipal principal) {
-        dto.setUserId(SecurityUtils.getCurrentUserId());
         CategoryDto created = svc.create(dto);
         return ResponseEntity.created(URI.create("/api/v1/categories/" + created.getId())).body(created);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CategoryDto> update(@PathVariable UUID id, @RequestBody CategoryDto dto, @AuthenticationPrincipal UserPrincipal principal) {
-        UUID userId = SecurityUtils.getCurrentUserId();
-        return ResponseEntity.ok(svc.update(id, dto, userId));
+        return ResponseEntity.ok(svc.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id, @AuthenticationPrincipal UserPrincipal principal) {
-        UUID userId = SecurityUtils.getCurrentUserId();
-        svc.delete(id, userId);
+        svc.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

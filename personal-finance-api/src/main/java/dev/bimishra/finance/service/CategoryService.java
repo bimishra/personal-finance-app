@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.UUID;
 
 public interface CategoryService {
-    List<CategoryDto> listByUser(UUID userId);
+    List<CategoryDto> listByUser();
 
-    List<CategoryDto> findAllForUser(UUID userId);
+    List<CategoryDto> findAllForUser();
 
-    CategoryDto get(UUID id, UUID userId);
+    CategoryDto get(UUID id);
     CategoryDto create(CategoryDto dto);
-    CategoryDto update(UUID id, CategoryDto dto, UUID userId);
-    void delete(UUID id, UUID userId);
+    CategoryDto update(UUID id, CategoryDto dto);
+    void delete(UUID id);
 }

@@ -9,6 +9,7 @@ import org.mapstruct.Mapping;
 public interface CategoryMapper {
 
     CategoryDto toDto(Category e);
+
     @Mapping(target = "defaultCategory", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)

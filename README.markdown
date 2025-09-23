@@ -114,7 +114,9 @@ SERVER_PORT=8080
 
 ```bash
 # 1. Build and start all services
-docker-compose up --build
+./run.sh
+# or on Windows
+run.bat
 
 # 2. Access the services:
 UI: http://localhost:3000
@@ -163,6 +165,9 @@ Spring Boot Actuator endpoints:
 ```text
 Backend Hot Reload:
   ./gradlew bootRun  (runs Spring Boot API locally)
+  OR
+  ./docker_run.sh
+  ./docker_run.bat (on Windows)
   Keep only DB in Docker
 
 Frontend Hot Reload:

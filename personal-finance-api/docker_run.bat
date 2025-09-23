@@ -9,9 +9,9 @@ for /f "tokens=1,2 delims==" %%a in (.env) do (
 docker build -t my-spring-api .
 
 docker run -p 8080:8080 ^
-  -e DATASOURCE_URL=%DATASOURCE_URL% ^
-  -e DATABASE_USERNAME=%DATABASE_USERNAME% ^
-  -e DATABASE_PASSWORD=%DATABASE_PASSWORD% ^
+  -e DATABASE_URL=%DATABASE_URL% ^
+  -e DB_USERNAME=%DB_USERNAME% ^
+  -e DB_PASSWORD=%DB_PASSWORD% ^
   -e OAUTH2_ISSUER_URI=%OAUTH2_ISSUER_URI% ^
   -e OAUTH2_AUDIENCE=%OAUTH2_AUDIENCE% ^
   my-spring-api
