@@ -70,7 +70,7 @@ export default function Accounts() {
                 <td className="px-3 py-2">{a.type}</td>
                 <td className="px-3 py-2">{a.currency}</td>
                 <td className="px-3 py-2">
-                   {formatCurrency(a.balance, a?.currency || 'USD')}
+                   {formatCurrency(a.balance, a?.currency || 'USD', true)}
                 </td>
               </tr>
             ))}

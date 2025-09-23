@@ -145,7 +145,7 @@ export default function TransactionTable({ transactions, onEdit }: Props) {
                 }`}
               >
                 {t.type === 'CREDIT' ? '+' : '-'}
-                {formatCurrency(t.amount, accounts.find(a => a.id === t.accountId)?.currency || 'USD')}
+                {formatCurrency(t.amount, accounts.find(a => a.id === t.accountId)?.currency || 'USD', true)}
               </td>
               <td className="px-3 py-2 flex gap-2">
                 <button
