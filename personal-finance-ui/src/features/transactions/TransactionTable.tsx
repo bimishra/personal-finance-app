@@ -8,11 +8,12 @@ import TransactionForm from './TransactionForm'
 import { formatCurrency } from '@/utils/currency'
 
 interface Props {
-  transactions: Transaction[]
-  onEdit?: React.Dispatch<React.SetStateAction<Transaction | null>>
+  transactions: Transaction[];
+  onEdit?: (transaction: Transaction) => void;
+  onDelete?: (transaction: Transaction) => Promise<void>;
 }
 
-export default function TransactionTable({ transactions, onEdit }: Props) {
+export default function TransactionTable({ transactions, onEdit, onDelete }: Props) {
   const accounts = useAppSelector(s => s.accounts.items)
   const dispatch = useAppDispatch()
 
@@ -178,17 +179,13 @@ export default function TransactionTable({ transactions, onEdit }: Props) {
 
       {/* Edit modal */}
       {editingTxn && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-[400px]">
-            <h2 className="text-lg font-semibold mb-4">Edit Transaction</h2>
-            <TransactionForm
-              initialData={editingTxn}
-              onSave={handleEditSave}
-              onCancel={() => setEditingTxn(null)}
-            />
-          </div>
-        </div>
+        <TransactionForm
+          open={!!editingTxn}
+          initialValues={editingTxn}
+          onSubmit={handleEditSave}
+          onClose={() => setEditingTxn(null)}
+        />
       )}
     </div>
-  )
+  );
 }
