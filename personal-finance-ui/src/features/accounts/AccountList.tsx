@@ -2,6 +2,8 @@ import React from 'react';
 import { Account } from './types';
 import { formatCurrency } from '@/utils/currency';
 import Card from '@/components/Card';
+import { AccountActions } from './AccountActions';
+import { useAppSelector } from '@/state/hooks';
 
 interface AccountListProps {
   accounts: Account[];
@@ -32,7 +34,7 @@ export const AccountList: React.FC<AccountListProps> = ({ accounts }) => {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {accounts.map((account) => (
         <Card key={account.id} className="h-full">
-          <div className="p-4">
+          <div className="p-4 group">
             <div className="flex justify-between items-start mb-4">
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">{account.name}</h3>
@@ -51,11 +53,24 @@ export const AccountList: React.FC<AccountListProps> = ({ accounts }) => {
                 <p className="text-sm text-gray-500">{account.currency}</p>
               </div>
             </div>
-            {account.createdAt && (
-              <p className="text-xs text-gray-500 mt-2">
-                Created: {new Date(account.createdAt).toLocaleDateString()}
-              </p>
-            )}
+            <div className="flex justify-between items-center">
+              <div className="space-y-1">
+                {account.createdAt && (
+                  <p className="text-xs text-gray-500">
+                    Created: {new Date(account.createdAt).toLocaleDateString()}
+                  </p>
+                )}
+                {account.transactionCount !== undefined && (
+                  <p className="text-xs text-gray-500">
+                    Transactions: {account.transactionCount}
+                  </p>
+                )}
+              </div>
+              <AccountActions
+                account={account}
+                hasTransactions={Boolean(account.transactionCount)}
+              />
+            </div>
           </div>
         </Card>
       ))}

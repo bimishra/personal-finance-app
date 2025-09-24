@@ -12,6 +12,22 @@ export const createAccount = createAsyncThunk('accounts/create', async (payload:
   return resp.data
 })
 
+export const updateAccount = createAsyncThunk(
+  'accounts/update',
+  async (account: Account) => {
+    const resp = await api.put<Account>(`/accounts/${account.id}`, account)
+    return resp.data
+  }
+)
+
+export const deleteAccount = createAsyncThunk(
+  'accounts/delete',
+  async (accountId: string) => {
+    await api.delete(`/accounts/${accountId}`)
+    return accountId
+  }
+)
+
 const accountsSlice = createSlice({
   name: 'accounts',
   initialState: { items: [] as Account[], status: 'idle' as 'idle' | 'loading' | 'succeeded' | 'failed' },
@@ -27,6 +43,14 @@ const accountsSlice = createSlice({
       })
       .addCase(createAccount.fulfilled, (state, action) => {
         state.items.push(action.payload)
+      })
+      .addCase(updateAccount.fulfilled, (state, action) => {
+        state.items = state.items.map(account =>
+          account.id === action.payload.id ? action.payload : account
+        )
+      })
+      .addCase(deleteAccount.fulfilled, (state, action) => {
+        state.items = state.items.filter(account => account.id !== action.payload)
       })
   }
 })

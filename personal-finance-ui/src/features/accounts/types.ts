@@ -13,6 +13,8 @@ export interface Account {
   currency: string;
   balance: number;
   createdAt?: string;
+  userId?: string;
+  transactionCount?: number;
 }
 
 export interface AccountFormData {
