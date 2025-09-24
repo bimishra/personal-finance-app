@@ -40,14 +40,51 @@ export default function Categories() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Categories</h1>
-        <button
-          onClick={() => setOpen(true)}
-          className="bg-indigo-600 text-white px-4 py-2 rounded"
-        >
-          New Category
-        </button>
+      <div className="mb-6 space-y-4">
+        <div className="flex justify-between items-center border-b border-gray-200 pb-4">
+          <div>
+            <h1 className="text-2xl font-semibold text-gray-900 leading-tight">Categories</h1>
+            <p className="mt-1 text-sm text-gray-600">
+              Manage your income and expense categories
+            </p>
+          </div>
+          <button
+            onClick={() => setOpen(true)}
+            className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
+          >
+            <svg 
+              className="w-4 h-4 mr-2" 
+              viewBox="0 0 20 20" 
+              fill="currentColor"
+            >
+              <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+            </svg>
+            New Category
+          </button>
+        </div>
+        
+        <div className="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <span className="text-sm font-medium text-gray-700">
+              {visibleCategories.length} {visibleCategories.length === 1 ? 'category' : 'categories'}
+            </span>
+            <div className="h-4 w-px bg-gray-300"></div>
+            <span className="text-sm text-gray-500">
+              {visibleCategories.filter(c => c.type === 'INCOME').length} Income • {visibleCategories.filter(c => c.type === 'EXPENSE').length} Expense
+            </span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className="text-sm text-gray-500">Sort by:</span>
+            <select 
+              className="text-sm border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              defaultValue="name"
+            >
+              <option value="name">Name</option>
+              <option value="type">Type</option>
+              <option value="transactions">Transactions</option>
+            </select>
+          </div>
+        </div>
       </div>
 
       <CategoryList 

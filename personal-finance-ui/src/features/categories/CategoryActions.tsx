@@ -32,12 +32,13 @@ export const CategoryActions: React.FC<CategoryActionsProps> = ({
 
   return (
     <>
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-1">
         <IconButton
           onClick={() => setIsEditModalOpen(true)}
           label="Edit Category"
           icon={<Icons.Edit />}
           tooltip="Edit this category"
+          className="hover:bg-blue-50"
         />
         <IconButton
           onClick={() => setIsDeleteModalOpen(true)}
@@ -50,6 +51,7 @@ export const CategoryActions: React.FC<CategoryActionsProps> = ({
               ? "Can't delete category with transactions. Remove or reassign transactions first."
               : "Delete this category"
           }
+          className="hover:bg-red-50"
         />
       </div>
 
