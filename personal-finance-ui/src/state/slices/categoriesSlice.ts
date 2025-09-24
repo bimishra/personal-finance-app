@@ -37,6 +37,25 @@ export const deleteCategory = createAsyncThunk(
   }
 )
 
+// Update a category
+export const updateCategory = createAsyncThunk(
+  'categories/update',
+  async (
+    {
+      id,
+      ...category
+    }: { id: string } & Omit<Category, 'id' | 'userId' | 'defaultCategory' | 'createdAt' | 'updatedAt'>,
+    { rejectWithValue }
+  ) => {
+    try {
+      const res = await api.put<Category>(`/categories/${id}`, category)
+      return res.data
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data || { message: err.message })
+    }
+  }
+)
+
 interface CategoriesState {
   items: Category[]
   loading: boolean
@@ -73,6 +92,20 @@ const categoriesSlice = createSlice({
       // Delete category
       .addCase(deleteCategory.fulfilled, (state, action: PayloadAction<string>) => {
         state.items = state.items.filter(c => c.id !== action.payload)
+      })
+
+      // Update category
+      .addCase(updateCategory.pending, state => {
+        state.loading = true
+      })
+      .addCase(updateCategory.fulfilled, (state, action: PayloadAction<Category>) => {
+        state.items = state.items.map(item =>
+          item.id === action.payload.id ? action.payload : item
+        )
+        state.loading = false
+      })
+      .addCase(updateCategory.rejected, state => {
+        state.loading = false
       })
   }
 })

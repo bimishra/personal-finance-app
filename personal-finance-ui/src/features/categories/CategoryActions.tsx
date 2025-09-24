@@ -32,11 +32,12 @@ export const CategoryActions: React.FC<CategoryActionsProps> = ({
 
   return (
     <>
-      <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="flex items-center space-x-2">
         <IconButton
           onClick={() => setIsEditModalOpen(true)}
           label="Edit Category"
           icon={<Icons.Edit />}
+          tooltip="Edit this category"
         />
         <IconButton
           onClick={() => setIsDeleteModalOpen(true)}
@@ -47,7 +48,7 @@ export const CategoryActions: React.FC<CategoryActionsProps> = ({
           tooltip={
             hasTransactions
               ? "Can't delete category with transactions. Remove or reassign transactions first."
-              : undefined
+              : "Delete this category"
           }
         />
       </div>
@@ -63,12 +64,10 @@ export const CategoryActions: React.FC<CategoryActionsProps> = ({
         onSubmit={async (values) => {
           try {
             if (onUpdate) {
-              await onUpdate();
-              toast.success('Category updated successfully');
+              await onUpdate(category, values);
               setIsEditModalOpen(false);
             }
           } catch (error) {
-            toast.error('Failed to update category');
             console.error('Update error:', error);
           }
         }}

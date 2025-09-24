@@ -13,6 +13,6 @@ export interface CategoryListItem extends Category {
 export interface CategoryActionsProps {
   category: CategoryListItem;
   hasTransactions?: boolean;
-  onUpdate?: () => void;
+  onUpdate?: (category: CategoryListItem, formData: CategoryFormData) => Promise<void>;
   onDelete?: () => void;
 }

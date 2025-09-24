@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@/state/hooks'
-import { fetchCategories, deleteCategory, createCategory } from '@/state/slices/categoriesSlice'
+import { fetchCategories, deleteCategory, createCategory, updateCategory } from '@/state/slices/categoriesSlice'
 import CategoryForm from '@/features/categories/CategoryForm'
+import { CategoryList } from '@/features/categories/CategoryList'
+import { CategoryFormData } from '@/features/categories/types'
 import toast from 'react-hot-toast'
 import { Category } from '@/types'
 
@@ -14,17 +16,27 @@ export default function Categories() {
     dispatch(fetchCategories())
   }, [dispatch])
 
-  const handleDelete = async (category: Category) => {
-    if (!confirm(`Are you sure you want to delete "${category.name}"?`)) return
+  const handleUpdateCategory = async (category: Category, formData: CategoryFormData) => {
     try {
-      await dispatch(deleteCategory(category.id)).unwrap()
-      toast.success(`Category "${category.name}" deleted successfully!`)
+      await dispatch(updateCategory({ id: category.id, ...formData })).unwrap();
+      toast.success(`Category "${formData.name}" updated successfully!`);
     } catch (err: any) {
-      toast.error(err?.message || 'Failed to delete category')
+      toast.error(err?.message || 'Failed to update category');
+      throw err;
     }
-  }
+  };
 
-  const visibleCategories = categories.filter(c => !c.defaultCategory)
+  const handleDeleteCategory = async (category: Category) => {
+    try {
+      await dispatch(deleteCategory(category.id)).unwrap();
+      toast.success(`Category "${category.name}" deleted successfully!`);
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to delete category');
+      throw err;
+    }
+  };
+
+  const visibleCategories = categories.filter(c => !c.defaultCategory);
 
   return (
     <div>
@@ -38,40 +50,14 @@ export default function Categories() {
         </button>
       </div>
 
-      <div className="bg-white rounded shadow overflow-x-auto">
-        <table className="min-w-full">
-          <thead>
-            <tr className="bg-gray-50">
-              <th className="px-3 py-2 text-left">Name</th>
-              <th className="px-3 py-2 text-left">Type</th>
-              <th className="px-3 py-2 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {visibleCategories.map(c => (
-              <tr key={c.id} className="border-t">
-                <td className="px-3 py-2">{c.name}</td>
-                <td className="px-3 py-2">{c.type}</td>
-                <td className="px-3 py-2">
-                  <button
-                    onClick={() => handleDelete(c)}
-                    className="px-2 py-1 text-red-600 border rounded"
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-            {visibleCategories.length === 0 && (
-              <tr>
-                <td colSpan={3} className="text-center py-4 text-gray-500">
-                  No categories available
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+      <CategoryList 
+        categories={visibleCategories.map(category => ({
+          ...category,
+          transactionCount: 0 // TODO: Add actual transaction count when available
+        }))}
+        onDelete={handleDeleteCategory}
+        onUpdate={handleUpdateCategory}
+      />
 
       <CategoryForm
         open={open}
