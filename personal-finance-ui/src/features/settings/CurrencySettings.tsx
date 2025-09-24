@@ -1,23 +1,31 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { CURRENCIES, getCurrencySymbol } from '@/utils/currency';
 import Card from '@/components/Card';
 import { useCurrency } from '@/context/CurrencyContext';
 import toast from 'react-hot-toast';
 
 export const CurrencySettings: React.FC = () => {
-  const { defaultCurrency, setDefaultCurrency } = useCurrency();
+  const { defaultCurrency, setDefaultCurrency, formatAmount } = useCurrency();
   const [selectedCurrency, setSelectedCurrency] = useState(defaultCurrency);
+
+  // Keep selected currency in sync with context
+  useEffect(() => {
+    setSelectedCurrency(defaultCurrency);
+  }, [defaultCurrency]);
 
   const handleCurrencyChange = useCallback(
     (currency: string) => {
       setSelectedCurrency(currency);
       setDefaultCurrency(currency);
-      toast.success('Default currency updated successfully', {
-        duration: 2000,
+      
+      // Show example of formatted amount in toast
+      const exampleAmount = formatAmount(1234.56);
+      toast.success(`Currency updated to ${currency}. Example: ${exampleAmount}`, {
+        duration: 3000,
         position: 'top-right',
       });
     },
-    [setDefaultCurrency]
+    [setDefaultCurrency, formatAmount]
   );
 
   const currentSymbol = getCurrencySymbol(selectedCurrency);

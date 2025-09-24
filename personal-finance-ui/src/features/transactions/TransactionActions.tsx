@@ -36,17 +36,21 @@ export const TransactionActions: React.FC<TransactionActionsProps> = ({
 
   return (
     <>
-      <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="flex items-center justify-center space-x-1">
         <IconButton
           onClick={() => setIsEditModalOpen(true)}
           label="Edit Transaction"
           icon={<Icons.Edit />}
+          tooltip="Edit this transaction"
+          className="hover:bg-blue-50"
         />
         <IconButton
           onClick={() => setIsDeleteModalOpen(true)}
           label="Delete Transaction"
           icon={<Icons.Delete />}
           variant="danger"
+          tooltip="Delete this transaction"
+          className="hover:bg-red-50"
         />
       </div>
 
