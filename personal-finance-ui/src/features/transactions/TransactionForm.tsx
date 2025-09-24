@@ -177,7 +177,7 @@ export default function TransactionForm({
           </div>
 
           {/* Keep Open (only for create) */}
-          {!initialData && (
+          {!effectiveInitialValues && (
             <div>
               <label className="flex items-center space-x-2">
                 <input

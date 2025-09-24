@@ -62,11 +62,13 @@ export default function Categories() {
       <CategoryForm
         open={open}
         onClose={() => setOpen(false)}
-        onSubmit={async (values) => {
+        onSubmit={async (values, keepOpen) => {
           try {
             await dispatch(createCategory(values)).unwrap();
             toast.success('Category created successfully');
-            setOpen(false);
+            if (!keepOpen) {
+              setOpen(false);
+            }
           } catch (error: any) {
             toast.error(error.message || 'Failed to create category');
           }
