@@ -3,7 +3,6 @@ import { Category } from '@/types';
 export interface CategoryFormData {
   name: string;
   type: 'INCOME' | 'EXPENSE';
-  description?: string;
 }
 
 export interface CategoryListItem extends Category {

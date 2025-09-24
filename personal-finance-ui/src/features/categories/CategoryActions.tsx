@@ -59,7 +59,7 @@ export const CategoryActions: React.FC<CategoryActionsProps> = ({
         initialValues={{
           name: category.name,
           type: category.type,
-          description: category.description || ''
+          
         }}
         onSubmit={async (values) => {
           try {
