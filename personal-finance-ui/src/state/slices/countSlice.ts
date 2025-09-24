@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import api from '../../services/api'
-import { Account } from '../../types'
+import { Account } from '@/features/accounts/types'
 
 export const fetchAccounts = createAsyncThunk('accounts/fetch', async () => {
   const resp = await api.get<Account[]>('/accounts')

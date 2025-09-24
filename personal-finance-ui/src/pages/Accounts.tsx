@@ -1,152 +1,49 @@
-import React, { useEffect, useState } from 'react'
-import { useAppDispatch, useAppSelector } from '../state/hooks'
-import { fetchAccounts, createAccount } from '../state/slices/countSlice'
-import Card from '../components/Card'
-import Modal from '../components/Modal'
-import { Account } from '../types'
-import { formatCurrency, getCurrencySymbol, CURRENCIES } from '@/utils/currency'
-
-// keep enum values in sync with backend
-const ACCOUNT_TYPES = [
-  'CURRENT',
-  'SAVINGS',
-  'CREDIT_CARD',
-  'INVESTMENT',
-  'CASH',
-  'LOAN',
-]
+import React, { useEffect, useState } from 'react';
+import { useAppDispatch, useAppSelector } from '@/state/hooks';
+import { fetchAccounts } from '@/state/slices/countSlice';
+import Modal from '@/components/Modal';
+import { AccountForm } from '@/features/accounts/AccountForm';
+import { AccountList } from '@/features/accounts/AccountList';
+import { useAccountForm } from '@/features/accounts/useAccountForm';
 
 export default function Accounts() {
-  const dispatch = useAppDispatch()
-  const accounts = useAppSelector(s => s.accounts.items)
-  const [open, setOpen] = useState(false)
-  const [form, setForm] = useState<Partial<Account>>({
-    name: '',
-    currency: 'USD',
-    type: 'CHECKING',
-    balance: 0 // Initialize balance to avoid uncontrolled input warning
-  })
+  const dispatch = useAppDispatch();
+  const accounts = useAppSelector((s) => s.accounts.items);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { formData, handleChange, handleSubmit, resetForm } = useAccountForm(() => {
+    setIsModalOpen(false);
+  });
 
   useEffect(() => {
-    dispatch(fetchAccounts())
-  }, [dispatch])
+    dispatch(fetchAccounts());
+  }, [dispatch]);
 
-  const submit = async () => {
-    if (!form.type) {
-      alert('Please select an account type')
-      return
-    }
-    await dispatch(createAccount(form))
-    setOpen(false)
-    setForm({ name: '', currency: 'INR', type: 'SAVINGS', balance: 0 })
-  }
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    resetForm();
+  };
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Accounts</h1>
+    <div className="container mx-auto px-4">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-2xl font-bold text-gray-900">Accounts</h1>
         <button
-          onClick={() => setOpen(true)}
-          className="bg-indigo-600 text-white px-4 py-2 rounded"
+          onClick={() => setIsModalOpen(true)}
+          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition-colors"
         >
           New Account
         </button>
       </div>
 
-      <Card>
-        <table className="min-w-full">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Currency</th>
-              <th>Balance</th>
-            </tr>
-          </thead>
-          <tbody>
-            {accounts.map(a => (
-              <tr key={a.id} className="border-t">
-                <td className="px-3 py-2">{a.name}</td>
-                <td className="px-3 py-2">{a.type}</td>
-                <td className="px-3 py-2">{a.currency}</td>
-                <td className="px-3 py-2">
-                   {formatCurrency(a.balance, a?.currency || 'USD', true)}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </Card>
+      <AccountList accounts={accounts} />
 
-      <Modal open={open} onClose={() => setOpen(false)} title="Create Account">
-        <div className="grid grid-cols-1 gap-3">
-          <label>
-            <div className="text-sm text-gray-600">Name</div>
-            <input
-              value={form.name}
-              onChange={e => setForm({ ...form, name: e.target.value })}
-              className="w-full border p-2 rounded mt-1"
-            />
-          </label>
-
-          <label>
-            <div className="text-sm text-gray-600">Type</div>
-            <select
-              value={form.type}
-              onChange={e => setForm({ ...form, type: e.target.value })}
-              className="w-full border p-2 rounded mt-1"
-            >
-              {ACCOUNT_TYPES.map(t => (
-                <option key={t} value={t}>
-                  {t.replace('_', ' ')}
-                </option>
-              ))}
-            </select>
-          </label>
-
-         <label>
-            <div className="text-sm text-gray-600">Currency</div>
-            <select
-              value={form.currency}
-              onChange={e => setForm({ ...form, currency: e.target.value })}
-              className="w-full border p-2 rounded mt-1"
-            >
-              {CURRENCIES.map(c => (
-                <option key={c} value={c}>
-                  {c} ({getCurrencySymbol(c)})
-                </option>
-              ))}
-            </select>
-          </label>
-
-           <label>
-            <div className="text-sm text-gray-600">Balance</div>
-            <input
-              type="number"
-              value={form.balance || ''}
-              onChange={e => {
-                const value = e.target.value;
-                setForm({ ...form, balance: value === '' ? 0 : parseFloat(value) || 0 });
-              }}
-              className="w-full border p-2 rounded mt-1"
-            />
-          </label>
-
-          <div className="text-right">
-            <button
-              onClick={() => setOpen(false)}
-              className="mr-2 px-4 py-2 border rounded"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={submit}
-              className="px-4 py-2 bg-indigo-600 text-white rounded"
-            >
-              Create
-            </button>
-          </div>
-        </div>
+      <Modal title="Create Account" open={isModalOpen} onClose={handleModalClose}>
+        <AccountForm
+          formData={formData}
+          onChange={handleChange}
+          onSubmit={handleSubmit}
+          onCancel={handleModalClose}
+        />
       </Modal>
     </div>
   )

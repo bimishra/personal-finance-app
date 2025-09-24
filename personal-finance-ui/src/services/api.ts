@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios'
 import { getAccessToken } from './auth'
+import { handleApiError } from '../utils/errorHandler'
 
 // baseURL is proxied in dev by Vite; in prod point to real URL via env var
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8080/api/v1'
@@ -40,7 +41,10 @@ api.interceptors.response.use(
             if (originalRequest.headers) originalRequest.headers.Authorization = 'Bearer ' + token
             return axios(originalRequest)
           })
-          .catch(err => Promise.reject(err))
+          .catch(err => {
+            handleApiError(err as AxiosError)
+            return Promise.reject(err)
+          })
       }
 
       originalRequest._retry = true
@@ -55,9 +59,11 @@ api.interceptors.response.use(
       } catch (err) {
         processQueue(err, null)
         isRefreshing = false
+        handleApiError(err as AxiosError)
         return Promise.reject(err)
       }
     }
+    handleApiError(error)
     return Promise.reject(error)
   }
 )
