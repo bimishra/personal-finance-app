@@ -5,17 +5,22 @@ import { AccountFormData } from './types';
 import toast from 'react-hot-toast';
 import { handleApiError } from '@/utils/errorHandler';
 import { AxiosError } from 'axios';
+import { useCurrency } from '@/context/CurrencyContext';
 
-const DEFAULT_FORM_STATE: AccountFormData = {
-  name: '',
-  currency: 'USD',
-  type: 'SAVINGS',
-  balance: 0
+const useDefaultFormState = (): AccountFormData => {
+  const { defaultCurrency } = useCurrency();
+  return {
+    name: '',
+    currency: defaultCurrency,
+    type: 'SAVINGS',
+    balance: 0
+  };
 };
 
 export const useAccountForm = (onSuccess?: () => void) => {
   const dispatch = useAppDispatch();
-  const [formData, setFormData] = useState<AccountFormData>(DEFAULT_FORM_STATE);
+  const defaultState = useDefaultFormState();
+  const [formData, setFormData] = useState<AccountFormData>(defaultState);
 
   const handleChange = useCallback((field: keyof AccountFormData, value: string | number) => {
     setFormData(prev => ({
@@ -33,7 +38,7 @@ export const useAccountForm = (onSuccess?: () => void) => {
     try {
       await dispatch(createAccount(formData)).unwrap();
       toast.success('Account created successfully');
-      setFormData(DEFAULT_FORM_STATE);
+      setFormData(defaultState);
       onSuccess?.();
     } catch (error) {
       handleApiError(error as AxiosError);
@@ -41,7 +46,7 @@ export const useAccountForm = (onSuccess?: () => void) => {
   }, [dispatch, formData, onSuccess]);
 
   const resetForm = useCallback(() => {
-    setFormData(DEFAULT_FORM_STATE);
+    setFormData(defaultState);
   }, []);
 
   return {

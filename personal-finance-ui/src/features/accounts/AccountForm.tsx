@@ -1,6 +1,7 @@
 import React from 'react';
 import { AccountFormData, AccountType } from './types';
-import { CURRENCIES, getCurrencySymbol } from '@/utils/currency';
+import { getCurrencySymbol } from '@/utils/currency';
+import { useCurrency } from '@/context/CurrencyContext';
 
 interface AccountFormProps {
   formData: AccountFormData;
@@ -53,24 +54,6 @@ export const AccountForm: React.FC<AccountFormProps> = ({
           {ACCOUNT_TYPES.map((type) => (
             <option key={type} value={type}>
               {type.replace('_', ' ')}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div>
-        <label htmlFor="currency" className="block text-sm font-medium text-gray-700">
-          Currency
-        </label>
-        <select
-          id="currency"
-          value={formData.currency}
-          onChange={(e) => onChange('currency', e.target.value)}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-        >
-          {CURRENCIES.map((currency) => (
-            <option key={currency} value={currency}>
-              {currency} ({getCurrencySymbol(currency)})
             </option>
           ))}
         </select>
