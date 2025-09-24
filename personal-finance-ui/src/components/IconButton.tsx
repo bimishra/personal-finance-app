@@ -19,7 +19,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
   disabled = false,
   tooltip,
 }) => {
-  const baseClasses = 'p-2 rounded-lg transition-all duration-200 relative group focus:outline-none focus:ring-2 focus:ring-offset-1';
+  const baseClasses = 'p-2 rounded-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1';
   const variantClasses = {
     default: disabled
       ? 'bg-gray-50 text-gray-400 cursor-not-allowed'
@@ -30,19 +30,25 @@ export const IconButton: React.FC<IconButtonProps> = ({
   };
 
   return (
-    <button
-      onClick={onClick}
-      className={`${baseClasses} ${variantClasses[variant]} ${className}`}
-      aria-label={label}
-      disabled={disabled}
-    >
-      {icon}
+    <div className="relative inline-flex items-center">
+      <button
+        onClick={onClick}
+        className={`peer ${baseClasses} ${variantClasses[variant]} ${className}`}
+        aria-label={label}
+        disabled={disabled}
+      >
+        {icon}
+      </button>
+
       {tooltip && (
-        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1.5 text-xs font-medium text-white bg-gray-800 rounded-md opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 max-w-xs text-center shadow-lg pointer-events-none scale-95 group-hover:scale-100">
+        <div
+          role="tooltip"
+          className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1.5 text-xs font-medium text-white bg-gray-900 rounded-md opacity-0 invisible peer-hover:opacity-100 peer-focus:opacity-100 peer-hover:visible peer-focus:visible transition-opacity duration-150 z-[100] whitespace-nowrap shadow-lg pointer-events-none"
+        >
           {tooltip}
-          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-gray-800"></div>
+          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-gray-900"></div>
         </div>
       )}
-    </button>
+    </div>
   );
 };

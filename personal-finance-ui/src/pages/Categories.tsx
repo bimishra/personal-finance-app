@@ -63,28 +63,7 @@ export default function Categories() {
           </button>
         </div>
         
-        <div className="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <span className="text-sm font-medium text-gray-700">
-              {visibleCategories.length} {visibleCategories.length === 1 ? 'category' : 'categories'}
-            </span>
-            <div className="h-4 w-px bg-gray-300"></div>
-            <span className="text-sm text-gray-500">
-              {visibleCategories.filter(c => c.type === 'INCOME').length} Income • {visibleCategories.filter(c => c.type === 'EXPENSE').length} Expense
-            </span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-500">Sort by:</span>
-            <select 
-              className="text-sm border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-              defaultValue="name"
-            >
-              <option value="name">Name</option>
-              <option value="type">Type</option>
-              <option value="transactions">Transactions</option>
-            </select>
-          </div>
-        </div>
+        
       </div>
 
       <CategoryList 
