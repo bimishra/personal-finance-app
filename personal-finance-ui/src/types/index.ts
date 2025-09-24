@@ -23,6 +23,7 @@ export interface Category {
   userId: UUID
   name: string
   type: 'INCOME' | 'EXPENSE'
+  description?: string
   defaultCategory: boolean
   createdAt?: string
   updatedAt?: string

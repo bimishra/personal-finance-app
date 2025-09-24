@@ -1,25 +1,31 @@
-import React, { useState } from 'react'
-import { useAppDispatch } from '@/state/hooks'
-import { createCategory } from '@/state/slices/categoriesSlice'
-import toast from 'react-hot-toast'
-import { Category } from '@/types'
+import React, { useState } from 'react';
+import { useAppDispatch } from '@/state/hooks';
+import toast from 'react-hot-toast';
+import { Category } from '@/types';
+import { CategoryFormData } from './types';
+import Modal from '@/components/Modal';
 
 interface CategoryFormProps {
-  open: boolean
-  onClose: () => void
+  initialValues?: CategoryFormData;
+  onSubmit: (values: CategoryFormData) => Promise<void>;
+  onClose: () => void;
+  open: boolean;
 }
 
-export default function CategoryForm({ open, onClose }: CategoryFormProps) {
-  const dispatch = useAppDispatch()
-
-  const [form, setForm] = useState<Omit<Category, 'id' | 'userId' | 'defaultCategory' | 'createdAt' | 'updatedAt'>>({
+const CategoryForm: React.FC<CategoryFormProps> = ({
+  initialValues = {
     name: '',
-    type: 'EXPENSE'
-  })
-  const [submitting, setSubmitting] = useState(false)
-  const [keepOpen, setKeepOpen] = useState(false)
+    type: 'EXPENSE',
+    description: ''
+  },
+  onSubmit,
+  onClose,
+  open
+}) => {
+  const [form, setForm] = useState<CategoryFormData>(initialValues);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setForm(prev => ({
       ...prev,
@@ -31,77 +37,70 @@ export default function CategoryForm({ open, onClose }: CategoryFormProps) {
     e.preventDefault()
     setSubmitting(true)
     try {
-      await dispatch(createCategory(form)).unwrap()
-      toast.success(`Category "${form.name}" created successfully!`)
-      if (!keepOpen) onClose()
-      setForm({ name: '', type: 'EXPENSE' })
+      await onSubmit(form);
     } catch (err: any) {
-      const message = err?.message || 'Failed to create category'
+      const message = err?.message || 'Failed to save category'
       toast.error(message)
     } finally {
       setSubmitting(false)
     }
   }
 
-  if (!open) return null
-
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
-      <div className="bg-white rounded shadow-lg w-96 p-6">
-        <h2 className="text-xl font-bold mb-4">New Category</h2>
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Name</label>
-            <input
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              className="w-full border p-2 rounded mt-1"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Type</label>
-            <select
-              name="type"
-              value={form.type}
-              onChange={handleChange}
-              className="w-full border p-2 rounded mt-1"
-            >
-              <option value="EXPENSE">Expense</option>
-              <option value="INCOME">Income</option>
-            </select>
-          </div>
-
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              checked={keepOpen}
-              onChange={e => setKeepOpen(e.target.checked)}
-              id="keepOpen"
-            />
-            <label htmlFor="keepOpen" className="ml-2 text-sm">Add another after this</label>
-          </div>
-
-          <div className="flex justify-end gap-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 border rounded"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={submitting}
-              className="px-4 py-2 bg-indigo-600 text-white rounded"
-            >
-              {submitting ? 'Saving...' : 'Create'}
-            </button>
-          </div>
-        </form>
+    <Modal open={open} onClose={onClose} title="New Category">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+        <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+        <input
+          id="name"
+          name="name"
+          type="text"
+          value={form.name}
+          onChange={handleChange}
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          required
+        />
       </div>
-    </div>
+
+      <div>
+        <label htmlFor="type" className="block text-sm font-medium text-gray-700">Type</label>
+        <select
+          id="type"
+          name="type"
+          value={form.type}
+          onChange={handleChange}
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        >
+          <option value="EXPENSE">Expense</option>
+          <option value="INCOME">Income</option>
+        </select>
+      </div>
+
+      <div>
+        <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
+        <textarea
+          id="description"
+          name="description"
+          value={form.description}
+          onChange={handleChange}
+          rows={3}
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          placeholder="Optional description"
+        />
+      </div>
+
+      <div className="flex justify-end gap-2">
+        <button
+          type="submit"
+          disabled={submitting}
+          className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {submitting ? 'Saving...' : 'Save'}
+        </button>
+      </div>
+    </form>
+    </Modal>
   )
 }
+
+export default CategoryForm;

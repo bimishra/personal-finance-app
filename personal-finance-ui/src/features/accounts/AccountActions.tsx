@@ -132,7 +132,7 @@ export const AccountActions: React.FC<AccountActionsProps> = ({
       </Modal>
 
       <DeleteConfirmationModal
-        isOpen={isDeleteModalOpen}
+        open={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleDelete}
         onExport={hasTransactions ? handleExportTransactions : undefined}

@@ -51,7 +51,7 @@ export const TransactionActions: React.FC<TransactionActionsProps> = ({
       </div>
 
       <DeleteConfirmationModal
-        isOpen={isDeleteModalOpen}
+        open={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleDelete}
         title="Delete Transaction"

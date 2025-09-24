@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '@/state/hooks'
-import { fetchCategories, deleteCategory } from '@/state/slices/categoriesSlice'
+import { fetchCategories, deleteCategory, createCategory } from '@/state/slices/categoriesSlice'
 import CategoryForm from '@/features/categories/CategoryForm'
 import toast from 'react-hot-toast'
 import { Category } from '@/types'
@@ -73,7 +73,19 @@ export default function Categories() {
         </table>
       </div>
 
-      <CategoryForm open={open} onClose={() => setOpen(false)} />
+      <CategoryForm
+        open={open}
+        onClose={() => setOpen(false)}
+        onSubmit={async (values) => {
+          try {
+            await dispatch(createCategory(values)).unwrap();
+            toast.success('Category created successfully');
+            setOpen(false);
+          } catch (error: any) {
+            toast.error(error.message || 'Failed to create category');
+          }
+        }}
+      />
     </div>
   )
 }
