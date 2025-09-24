@@ -69,12 +69,25 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     } catch (err) {
       console.error("Error fetching user:", err);
       
-      // If it's a 401 error, the token might be expired
+      // Only clear auth state if we get a clear unauthorized response
       if (err && typeof err === 'object' && 'response' in err) {
         const response = (err as any).response;
         if (response?.status === 401) {
-          console.log("Token expired, clearing auth state");
-          clearAuthState();
+          console.log("Unauthorized access, checking Auth0 session");
+          // Check if we're still authenticated with Auth0 before clearing
+          const stillAuthenticated = await checkIsAuthenticated();
+          if (!stillAuthenticated) {
+            console.log("No valid Auth0 session, clearing auth state");
+            clearAuthState();
+          } else {
+            console.log("Auth0 session still valid, attempting to refresh token");
+            // Try to get a new token
+            const newToken = await getAccessToken();
+            if (newToken) {
+              // If we got a new token, try fetching user again
+              return await fetchUser();
+            }
+          }
         }
       }
       

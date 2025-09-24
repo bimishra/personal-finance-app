@@ -22,9 +22,10 @@ export async function initAuth(): Promise<void> {
         redirect_uri: redirectUri,
         scope: 'openid profile email'
       },
-      // Use refresh tokens for better UX (enable in Auth0 dashboard)
+      // Use refresh tokens and localstorage for persistent sessions
       useRefreshTokens: true,
-      cacheLocation: 'memory' // Use memory instead of localStorage to avoid state issues
+      cacheLocation: 'localstorage', // Use localStorage to persist auth state
+      cookieDomain: window.location.hostname // ensure cookies work on all subdomains
     })
   } catch (e) {
     console.error('Auth initialization error:', e)

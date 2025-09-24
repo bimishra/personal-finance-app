@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react'
-import { Routes, Route, Outlet, Navigate, useLocation } from 'react-router-dom'
+import React from 'react'
+import { Routes, Route, Outlet, Navigate } from 'react-router-dom'
+import { useUser } from './context/UserContext'
 import { UserProvider } from './context/UserContext'
 import { CurrencyProvider } from './context/CurrencyContext'
 import Navbar from './components/Navbar'
@@ -27,17 +28,8 @@ const AuthenticatedLayout = () => (
 
 // Root path handler component
 const RootRedirect = () => {
-  const location = useLocation();
-  
-  useEffect(() => {
-    // Clear any stale state when landing on root after logout
-    if (location.pathname === '/') {
-      localStorage.clear();
-      sessionStorage.clear();
-    }
-  }, [location.pathname]);
-
-  return <Navigate to="/login" replace />;
+  const { isAuthenticated } = useUser();
+  return <Navigate to={isAuthenticated ? "/dashboard" : "/login"} replace />;
 };
 
 function App() {
