@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { Routes, Route, Outlet, Navigate, useLocation } from 'react-router-dom'
 import { UserProvider } from './context/UserContext'
+import { CurrencyProvider } from './context/CurrencyContext'
 import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
 import AuthGuard from './components/AuthGuard'
@@ -42,12 +43,13 @@ const RootRedirect = () => {
 function App() {
   return (
     <UserProvider>
-      <div className="min-h-screen bg-gray-100">
-        <Navbar />
-        <div className="max-w-7xl mx-auto p-4">
-          <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<RootRedirect />} />
+      <CurrencyProvider>
+        <div className="min-h-screen bg-gray-100">
+          <Navbar />
+          <div className="max-w-7xl mx-auto p-4">
+            <Routes>
+              {/* Public routes */}
+              <Route path="/" element={<RootRedirect />} />
             <Route path="/login" element={<Login />} />
             <Route path="/callback" element={<LoginCallback />} />
             
@@ -66,6 +68,7 @@ function App() {
           </Routes>
         </div>
       </div>
+      </CurrencyProvider>
     </UserProvider>
   )
 }

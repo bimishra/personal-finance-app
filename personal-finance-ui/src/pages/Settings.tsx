@@ -1,14 +1,19 @@
-import React from 'react'
-import Card from '../components/Card'
+import React from 'react';
+import { CurrencySettings } from '@/features/settings/CurrencySettings';
 
 export default function Settings() {
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Settings: (Coming soon)</h1>
-      <Card>
-        <h1 className="text-lg font-semibold mb-3">To be implemented: Account and application settings.</h1>
-        <p className="text-sm text-gray-600">User Settings like currency, theme, etc.</p>
-      </Card>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+        <p className="mt-2 text-sm text-gray-600">
+          Manage your application preferences and account settings.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <CurrencySettings />
+      </div>
     </div>
   )
 }
