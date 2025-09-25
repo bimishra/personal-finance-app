@@ -35,41 +35,41 @@ export const AccountList: React.FC<AccountListProps> = ({ accounts }) => {
       {accounts.map((account) => (
         <Card key={account.id} className="h-full">
           <div className="p-4 group">
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">{account.name}</h3>
-                <span
-                  className={`inline-block px-2 py-1 text-xs font-medium rounded-full mt-1 ${getAccountTypeColor(
-                    account.type
-                  )}`}
-                >
-                  {account.type.replace('_', ' ')}
-                </span>
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center gap-4 min-w-0">
+                <div className="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-700 font-semibold">{(account.name || '').slice(0,2).toUpperCase()}</div>
+                <div className="min-w-0">
+                  <h3 className="text-sm font-medium text-gray-900 truncate">{account.name}</h3>
+                  <div className="mt-1">
+                    <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full ${getAccountTypeColor(account.type)}`}>
+                      {account.type.replace('_', ' ')}
+                    </span>
+                  </div>
+                </div>
               </div>
+
               <div className="text-right">
-                <p className="text-2xl font-bold text-gray-900">
-                  {formatCurrency(account.balance, account.currency)}
-                </p>
+                <p className="text-xl font-semibold text-gray-900">{formatCurrency(account.balance, account.currency)}</p>
                 <p className="text-sm text-gray-500">{account.currency}</p>
               </div>
             </div>
-            <div className="flex justify-between items-center">
-              <div className="space-y-1">
+
+            <div className="flex items-center justify-between">
+              <div className="text-xs text-gray-500 space-y-1">
                 {account.createdAt && (
-                  <p className="text-xs text-gray-500">
-                    Created: {new Date(account.createdAt).toLocaleDateString()}
-                  </p>
+                  <div>Created: {new Date(account.createdAt).toLocaleDateString()}</div>
                 )}
                 {account.transactionCount !== undefined && (
-                  <p className="text-xs text-gray-500">
-                    Transactions: {account.transactionCount}
-                  </p>
+                  <div>Transactions: {account.transactionCount}</div>
                 )}
               </div>
-              <AccountActions
-                account={account}
-                hasTransactions={Boolean(account.transactionCount)}
-              />
+
+              <div>
+                <AccountActions
+                  account={account}
+                  hasTransactions={Boolean(account.transactionCount)}
+                />
+              </div>
             </div>
           </div>
         </Card>

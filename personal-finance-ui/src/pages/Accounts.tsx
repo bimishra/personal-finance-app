@@ -10,6 +10,7 @@ export default function Accounts() {
   const dispatch = useAppDispatch();
   const accounts = useAppSelector((s) => s.accounts.items);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [query, setQuery] = useState('');
   const { formData, handleChange, handleSubmit, resetForm } = useAccountForm(() => {
     setIsModalOpen(false);
   });
@@ -23,19 +24,45 @@ export default function Accounts() {
     resetForm();
   };
 
+  const filtered = accounts.filter(a => a.name.toLowerCase().includes(query.toLowerCase()));
+
   return (
     <div className="container mx-auto px-4">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Accounts</h1>
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition-colors"
-        >
-          New Account
-        </button>
+      <div className="mb-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold text-gray-900">Accounts</h1>
+            <p className="mt-1 text-sm text-gray-600">Overview of your accounts — balances, type and recent activity.</p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="pl-10 pr-3 py-2 rounded-md bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                placeholder="Search accounts"
+                aria-label="Search accounts"
+              />
+              <svg className="w-4 h-4 text-gray-400 absolute left-3 top-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35m1.6-5.15A7 7 0 1110.5 4.5a7 7 0 018.75 8.75z" />
+              </svg>
+            </div>
+
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+            >
+              <svg className="w-4 h-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+              </svg>
+              New Account
+            </button>
+          </div>
+        </div>
       </div>
 
-      <AccountList accounts={accounts} />
+      <AccountList accounts={filtered} />
 
       <Modal title="Create Account" open={isModalOpen} onClose={handleModalClose}>
         <AccountForm
