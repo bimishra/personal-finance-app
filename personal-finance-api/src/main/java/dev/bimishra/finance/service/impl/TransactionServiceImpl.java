@@ -1,12 +1,12 @@
 package dev.bimishra.finance.service.impl;
 
+import dev.bimishra.finance.repository.TransactionRepository;
 import dev.bimishra.finance.dto.TransactionDto;
 import dev.bimishra.finance.entity.Account;
 import dev.bimishra.finance.entity.Transaction;
 import dev.bimishra.finance.exception.ResourceNotFoundException;
 import dev.bimishra.finance.mapper.TransactionMapper;
 import dev.bimishra.finance.repository.AccountRepository;
-import dev.bimishra.finance.repository.TransactionRepository;
 import dev.bimishra.finance.service.TransactionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,6 +16,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.LinkedHashMap;
+import java.math.BigDecimal;
 
 @Service
 @Transactional
@@ -97,5 +100,40 @@ public class TransactionServiceImpl implements TransactionService {
         }
         accountRepo.save(acct);
         repo.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<LocalDate, BigDecimal> getDailyNetAmounts(UUID userId, LocalDate from, LocalDate to) {
+        if (userId == null) throw new IllegalArgumentException("userId is required");
+        if (from == null || to == null) throw new IllegalArgumentException("from and to dates are required");
+        if (from.isAfter(to)) throw new IllegalArgumentException("from must be on or before to");
+        if (to.isAfter(from.plusYears(1))) throw new IllegalArgumentException("Range cannot exceed 1 year");
+
+        // Initialize series with zeros for each date in range (inclusive)
+        Map<LocalDate, BigDecimal> series = new LinkedHashMap<>();
+        LocalDate cursor = from;
+        while (!cursor.isAfter(to)) {
+            series.put(cursor, BigDecimal.ZERO);
+            cursor = cursor.plusDays(1);
+        }
+
+        List<Object[]> rows = repo.findDailyNetAmounts(userId, from, to);
+        if (rows == null) return series;
+        for (Object[] row : rows) {
+            if (row == null || row.length < 2) continue;
+            Object dayObj = row[0];
+            LocalDate day;
+            if (dayObj instanceof java.sql.Date) {
+                day = ((java.sql.Date) dayObj).toLocalDate();
+            } else if (dayObj instanceof LocalDate) {
+                day = (LocalDate) dayObj;
+            } else {
+                day = LocalDate.parse(dayObj.toString());
+            }
+            BigDecimal total = row[1] == null ? BigDecimal.ZERO : new BigDecimal(row[1].toString());
+            series.put(day, total);
+        }
+        return series;
     }
 }

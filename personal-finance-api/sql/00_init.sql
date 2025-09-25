@@ -150,3 +150,4 @@ INSERT INTO categories (name, type, is_default) VALUES
 ('Education', 'EXPENSE', TRUE),
 ('Miscellaneous', 'EXPENSE', TRUE),
 ('Gifts Given', 'EXPENSE', TRUE);
+
