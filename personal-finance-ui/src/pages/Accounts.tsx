@@ -5,6 +5,7 @@ import Modal from '@/components/Modal';
 import { AccountForm } from '@/features/accounts/AccountForm';
 import { AccountList } from '@/features/accounts/AccountList';
 import { useAccountForm } from '@/features/accounts/useAccountForm';
+import SearchInput from '@/components/SearchInput';
 
 export default function Accounts() {
   const dispatch = useAppDispatch();
@@ -36,18 +37,7 @@ export default function Accounts() {
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="relative">
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="pl-10 pr-3 py-2 rounded-md bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200"
-                placeholder="Search accounts"
-                aria-label="Search accounts"
-              />
-              <svg className="w-4 h-4 text-gray-400 absolute left-3 top-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35m1.6-5.15A7 7 0 1110.5 4.5a7 7 0 018.75 8.75z" />
-              </svg>
-            </div>
+            <SearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search accounts" ariaLabel="Search accounts" onClear={() => setQuery('')} />
 
             <button
               onClick={() => setIsModalOpen(true)}
