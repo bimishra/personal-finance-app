@@ -136,4 +136,45 @@ public class TransactionServiceImpl implements TransactionService {
         }
         return series;
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Map<LocalDate, BigDecimal>> getDailyIncomeExpense(UUID userId, LocalDate from, LocalDate to) {
+        if (userId == null) throw new IllegalArgumentException("userId is required");
+        if (from == null || to == null) throw new IllegalArgumentException("from and to dates are required");
+        if (from.isAfter(to)) throw new IllegalArgumentException("from must be on or before to");
+        if (to.isAfter(from.plusYears(1))) throw new IllegalArgumentException("Range cannot exceed 1 year");
+
+        Map<LocalDate, BigDecimal> incomeSeries = new LinkedHashMap<>();
+        Map<LocalDate, BigDecimal> expenseSeries = new LinkedHashMap<>();
+
+        LocalDate cursor = from;
+        while (!cursor.isAfter(to)) {
+            incomeSeries.put(cursor, BigDecimal.ZERO);
+            expenseSeries.put(cursor, BigDecimal.ZERO);
+            cursor = cursor.plusDays(1);
+        }
+
+        List<Object[]> rows = repo.findDailyIncomeExpense(userId, from, to);
+        if (rows == null) return Map.of("income", incomeSeries, "expense", expenseSeries);
+
+        for (Object[] row : rows) {
+            if (row == null || row.length < 3) continue;
+            Object dayObj = row[0];
+            LocalDate day;
+            if (dayObj instanceof java.sql.Date) {
+                day = ((java.sql.Date) dayObj).toLocalDate();
+            } else if (dayObj instanceof LocalDate) {
+                day = (LocalDate) dayObj;
+            } else {
+                day = LocalDate.parse(dayObj.toString());
+            }
+            BigDecimal income = row[1] == null ? BigDecimal.ZERO : new BigDecimal(row[1].toString());
+            BigDecimal expense = row[2] == null ? BigDecimal.ZERO : new BigDecimal(row[2].toString());
+            incomeSeries.put(day, income);
+            expenseSeries.put(day, expense);
+        }
+
+        return Map.of("income", incomeSeries, "expense", expenseSeries);
+    }
 }

@@ -18,4 +18,7 @@ public interface TransactionService {
 
     // Returns an ordered map (insertion order) of LocalDate -> net amount (credits positive, debits negative)
     Map<LocalDate, BigDecimal> getDailyNetAmounts(UUID userId, LocalDate from, LocalDate to);
+
+    // Returns two ordered maps keyed by LocalDate: "income" -> daily income, "expense" -> daily expense
+    Map<String, Map<LocalDate, BigDecimal>> getDailyIncomeExpense(UUID userId, LocalDate from, LocalDate to);
 }

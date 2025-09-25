@@ -52,7 +52,7 @@ public class ReportController {
     }
 
     // New: daily timeseries endpoint (net amount per day)
-    @GetMapping("/timeseries")
+    @GetMapping("/timeseries/balance")
     public ResponseEntity<Map<String, Object>> timeseries(@AuthenticationPrincipal UserPrincipal principal,
                                                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
                                                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
@@ -79,6 +79,46 @@ public class ReportController {
                 "from", from,
                 "to", to,
                 "series", out
+        ));
+    }
+
+    // New: separated daily timeseries for income and expense
+    @GetMapping("/timeseries")
+    public ResponseEntity<Map<String, Object>> timeseriesSeparated(@AuthenticationPrincipal UserPrincipal principal,
+                                                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+                                                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+        // Validate parameters
+        if (from == null || to == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Both 'from' and 'to' parameters are required and must be ISO dates."));
+        }
+        if (from.isAfter(to)) {
+            return ResponseEntity.badRequest().body(Map.of("error", "'from' must be on or before 'to'."));
+        }
+        if (to.isAfter(from.plusYears(1))) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Range cannot exceed 1 year."));
+        }
+
+        UUID userId = SecurityUtils.getCurrentUserId();
+        Map<String, Map<LocalDate, BigDecimal>> separated = txnService.getDailyIncomeExpense(userId, from, to);
+
+        Map<LocalDate, BigDecimal> incomeSeries = separated.getOrDefault("income", Map.of());
+        Map<LocalDate, BigDecimal> expenseSeries = separated.getOrDefault("expense", Map.of());
+
+        Map<String, BigDecimal> incomeOut = new LinkedHashMap<>();
+        Map<String, BigDecimal> expenseOut = new LinkedHashMap<>();
+
+        for (Map.Entry<LocalDate, BigDecimal> e : incomeSeries.entrySet()) {
+            incomeOut.put(e.getKey().toString(), e.getValue());
+        }
+        for (Map.Entry<LocalDate, BigDecimal> e : expenseSeries.entrySet()) {
+            expenseOut.put(e.getKey().toString(), e.getValue());
+        }
+
+        return ResponseEntity.ok(Map.of(
+                "from", from,
+                "to", to,
+                "income", incomeOut,
+                "expense", expenseOut
         ));
     }
 }

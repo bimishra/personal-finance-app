@@ -20,4 +20,13 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
             "WHERE user_id = :userId AND txn_date >= :from AND txn_date <= :to " +
             "GROUP BY txn_date ORDER BY txn_date", nativeQuery = true)
     List<Object[]> findDailyNetAmounts(@Param("userId") UUID userId, @Param("from") LocalDate from, @Param("to") LocalDate to);
+
+    // Returns day, income (sum of credits), expense (sum of debits) per txn_date
+    @Query(value = "SELECT txn_date AS day, " +
+            "SUM(CASE WHEN type = 'CREDIT' THEN amount ELSE 0 END) AS income, " +
+            "SUM(CASE WHEN type = 'DEBIT' THEN amount ELSE 0 END) AS expense " +
+            "FROM transactions " +
+            "WHERE user_id = :userId AND txn_date >= :from AND txn_date <= :to " +
+            "GROUP BY txn_date ORDER BY txn_date", nativeQuery = true)
+    List<Object[]> findDailyIncomeExpense(@Param("userId") UUID userId, @Param("from") LocalDate from, @Param("to") LocalDate to);
 }
