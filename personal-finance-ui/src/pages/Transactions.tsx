@@ -12,12 +12,14 @@ import Modal from '@/components/Modal';
 import TransactionForm from '@/features/transactions/TransactionForm';
 import { TransactionList } from '@/features/transactions/TransactionList';
 import toast from 'react-hot-toast';
+import SearchInput from '@/components/SearchInput';
 
 export default function Transactions() {
   const dispatch = useAppDispatch();
   const transactions = useAppSelector((s) => s.transactions.items);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+  const [query, setQuery] = useState('');
 
   useEffect(() => {
     dispatch(fetchTransactions());
@@ -61,36 +63,48 @@ export default function Transactions() {
   const totalIncome = incomeTxns.reduce((sum, t) => sum + Number(t.amount), 0);
   const totalExpense = expenseTxns.reduce((sum, t) => sum + Number(t.amount), 0);
 
+  const filtered = transactions.filter(t => {
+    const q = query.trim().toLowerCase();
+    if (!q) return true;
+    return (
+      String(t.amount).toLowerCase().includes(q) ||
+      (t.description || '').toLowerCase().includes(q) ||
+      (t.currency || '').toLowerCase().includes(q) ||
+      (t.txnDate || '').toLowerCase().includes(q)
+    );
+  });
+
   return (
     <div>
       <div className="mb-6 space-y-4">
-        <div className="flex justify-between items-center border-b border-gray-200 pb-4">
+        <div className="flex items-center justify-between border-b border-gray-200 pb-4">
           <div>
             <h1 className="text-2xl font-semibold text-gray-900 leading-tight">Transactions</h1>
-            <p className="mt-1 text-sm text-gray-600">
-              Manage your income and expense transactions
-            </p>
+            <p className="mt-1 text-sm text-gray-600">Manage your income and expense transactions</p>
           </div>
-          <button
-            onClick={() => setIsCreateModalOpen(true)}
-            className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
-          >
-            <svg 
-              className="w-4 h-4 mr-2" 
-              viewBox="0 0 20 20" 
-              fill="currentColor"
+
+          <div className="flex items-center gap-3">
+            <SearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search transactions" ariaLabel="Search transactions" onClear={() => setQuery('')} />
+
+            <button
+              onClick={() => setIsCreateModalOpen(true)}
+              className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
             >
-              <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-            </svg>
-            New Transaction
-          </button>
+              <svg 
+                className="w-4 h-4 mr-2" 
+                viewBox="0 0 20 20" 
+                fill="currentColor"
+              >
+                <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+              </svg>
+              New Transaction
+            </button>
+          </div>
         </div>
-        
-        
       </div>
 
       <TransactionList
-        transactions={transactions}
+        transactions={filtered}
         onEdit={setEditingTransaction}
         onDelete={handleDeleteTransaction}
       />

@@ -77,34 +77,30 @@ export default function TransactionTable({ transactions, onEdit, onDelete }: Pro
   }
 
   return (
-    <div className="bg-white rounded shadow">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-100">
       {/* Filter & Bulk Delete */}
-      <div className="flex flex-wrap justify-between items-center p-4 border-b bg-gray-50 gap-4">
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <label className="text-sm font-medium text-gray-700">Account:</label>
+      <div className="flex flex-wrap items-center justify-between p-3 border-b gap-3">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium text-gray-700">Account</label>
             <select
-              className="block w-48 pl-3 pr-10 py-2 text-sm border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-md"
+              className="block w-40 pl-3 pr-8 py-2 text-sm border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-md"
               value={selectedAccount}
               onChange={e => setSelectedAccount(e.target.value)}
             >
               <option value="ALL">All Accounts</option>
               {accounts.map(a => (
-                <option key={a.id} value={a.id}>
-                  {a.name}
-                </option>
+                <option key={a.id} value={a.id}>{a.name}</option>
               ))}
             </select>
           </div>
-          <div className="h-6 w-px bg-gray-300"></div>
-          <div className="text-sm text-gray-500">
-            {selectedTxns.size} selected
-          </div>
+
+          <div className="text-sm text-gray-500">{selectedTxns.size} selected</div>
         </div>
-        
-        <div className="flex items-center space-x-3">
+
+        <div className="flex items-center gap-3">
           <button
-            className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-red-600 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+            className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md text-red-600 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
             onClick={handleBulkDelete}
             disabled={selectedTxns.size === 0}
           >
@@ -117,84 +113,76 @@ export default function TransactionTable({ transactions, onEdit, onDelete }: Pro
       </div>
 
       {/* Table */}
-      <table className="min-w-full table-fixed divide-y divide-gray-200">
-        <thead>
-          <tr className="bg-gray-50">
-            <th scope="col" className="w-12 px-3 py-2 text-center">
-              <input
-                type="checkbox"
-                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                checked={selectedTxns.size === filteredTxns.length && filteredTxns.length > 0}
-                onChange={e => {
-                  if (e.target.checked) setSelectedTxns(new Set(filteredTxns.map(t => t.id)))
-                  else setSelectedTxns(new Set())
-                }}
-              />
-            </th>
-            <th scope="col" className="w-28 px-3 py-2 text-left text-sm font-medium text-gray-500">Date</th>
-            <th scope="col" className="w-36 px-3 py-2 text-left text-sm font-medium text-gray-500">Account</th>
-            <th scope="col" className="px-3 py-2 text-left text-sm font-medium text-gray-500">Description</th>
-            <th scope="col" className="w-32 px-3 py-2 text-right text-sm font-medium text-gray-500">Amount</th>
-            <th scope="col" className="w-24 px-3 py-2 text-center text-sm font-medium text-gray-500">Actions</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-200 bg-white">
-          {filteredTxns.map(t => (
-            <tr key={t.id} className="hover:bg-gray-50 transition-colors duration-150">
-              <td className="px-3 py-2 text-center align-middle">
+      <div className="w-full overflow-hidden">
+        <table className="w-full divide-y divide-gray-200 table-fixed">
+          <thead>
+            <tr className="bg-gray-50">
+              <th scope="col" className="w-12 px-2 py-2 text-center">
                 <input
                   type="checkbox"
                   className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                  checked={selectedTxns.has(t.id)}
-                  onChange={() => toggleSelect(t.id)}
+                  checked={selectedTxns.size === filteredTxns.length && filteredTxns.length > 0}
+                  onChange={e => {
+                    if (e.target.checked) setSelectedTxns(new Set(filteredTxns.map(t => t.id)))
+                    else setSelectedTxns(new Set())
+                  }}
                 />
-              </td>
-              <td className="px-3 py-2 text-sm text-gray-900">{t.txnDate}</td>
-              <td className="px-3 py-2 text-sm text-gray-500">
-                {accounts.find(a => a.id === t.accountId)?.name || '—'}
-              </td>
-              <td className="px-3 py-2 text-sm text-gray-900">{t.description}</td>
-              <td
-                className={`px-3 py-2 text-sm font-medium text-right whitespace-nowrap ${
-                  t.type === 'CREDIT' ? 'text-green-600' : 'text-red-600'
-                }`}
-              >
-                {t.type === 'CREDIT' ? '+' : '-'}
-                {formatAmount(t.amount)}
-              </td>
-              <td className="px-3 py-2 text-sm text-center">
-                <div className="flex justify-center items-center space-x-1">
-                  <IconButton
-                    onClick={() => setEditingTxn(t)}
-                    label="Edit Transaction"
-                    icon={<Icons.Edit className="w-4 h-4" />}
-                    tooltip="Edit this transaction"
-                    className="hover:bg-blue-50"
-                  />
-                  <IconButton
-                    onClick={() => handleDelete(t.id)}
-                    label="Delete Transaction"
-                    icon={<Icons.Delete className="w-4 h-4" />}
-                    variant="danger"
-                    tooltip="Delete this transaction"
-                    className="hover:bg-red-50"
-                  />
-                </div>
-              </td>
+              </th>
+              <th scope="col" className="w-24 px-2 py-2 text-left text-sm font-medium text-gray-500">Date</th>
+              <th scope="col" className="w-36 px-2 py-2 text-left text-sm font-medium text-gray-500">Account</th>
+              <th scope="col" className="px-2 py-2 text-left text-sm font-medium text-gray-500">Description</th>
+              <th scope="col" className="w-28 px-2 py-2 text-right text-sm font-medium text-gray-500">Amount</th>
+              <th scope="col" className="w-20 px-2 py-2 text-center text-sm font-medium text-gray-500">Actions</th>
             </tr>
-          ))}
-          {!filteredTxns.length && (
-            <tr>
-              <td
-                className="px-3 py-8 text-center text-sm text-gray-500"
-                colSpan={6}
-              >
-                No transactions found
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-gray-200 bg-white">
+            {filteredTxns.map(t => (
+              <tr key={t.id} className="hover:bg-gray-50 transition-colors duration-150">
+                <td className="px-2 py-2 text-center align-middle">
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                    checked={selectedTxns.has(t.id)}
+                    onChange={() => toggleSelect(t.id)}
+                  />
+                </td>
+                <td className="px-2 py-2 text-sm text-gray-900">{t.txnDate}</td>
+                <td className="px-2 py-2 text-sm text-gray-500 truncate">{accounts.find(a => a.id === t.accountId)?.name || '—'}</td>
+                <td className="px-2 py-2 text-sm text-gray-900 truncate max-w-[40ch]">{t.description}</td>
+                <td className="px-2 py-2 text-sm font-medium text-right whitespace-nowrap">
+                  <span className={`inline-flex items-center px-2 py-1 rounded-md text-sm font-medium ${t.type === 'CREDIT' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                    {t.type === 'CREDIT' ? '+' : '-'}{formatAmount(t.amount)}
+                  </span>
+                </td>
+                <td className="px-2 py-2 text-sm text-center">
+                  <div className="flex justify-center items-center space-x-1">
+                    <IconButton
+                      onClick={() => setEditingTxn(t)}
+                      label="Edit Transaction"
+                      icon={<Icons.Edit className="w-4 h-4" />}
+                      tooltip="Edit this transaction"
+                      className="hover:bg-blue-50"
+                    />
+                    <IconButton
+                      onClick={() => handleDelete(t.id)}
+                      label="Delete Transaction"
+                      icon={<Icons.Delete className="w-4 h-4" />}
+                      variant="danger"
+                      tooltip="Delete this transaction"
+                      className="hover:bg-red-50"
+                    />
+                  </div>
+                </td>
+              </tr>
+            ))}
+            {!filteredTxns.length && (
+              <tr>
+                <td className="px-3 py-8 text-center text-sm text-gray-500" colSpan={6}>No transactions found</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
 
       {/* Edit modal */}
       {editingTxn && (
