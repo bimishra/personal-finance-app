@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { initAuth, handleRedirectCallback } from "../services/auth";
 import { useUser } from "../context/UserContext";
+import styles from "./LoginCallback.module.css";
 
 export default function LoginCallback() {
   const navigate = useNavigate();
@@ -66,20 +67,20 @@ export default function LoginCallback() {
   }, [navigate, fetchUser, isProcessing]);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="text-center bg-white p-8 rounded-lg shadow-md">
+    <div className={styles.root}>
+      <div className={styles.card}>
         {error ? (
           <>
-            <div className="text-red-500 text-4xl mb-4">⚠️</div>
-            <h2 className="text-xl font-semibold text-red-600 mb-2">Authentication Error</h2>
-            <p className="text-gray-600 mb-4">{error}</p>
-            <p className="text-sm text-gray-500">Redirecting to login page...</p>
+            <div className={styles.errorIcon}>⚠️</div>
+            <h2 className={styles.errorHeading}>Authentication Error</h2>
+            <p className={styles.errorText}>{error}</p>
+            <p className={styles.smallMuted}>Redirecting to login page...</p>
           </>
         ) : (
           <>
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-            <h2 className="text-xl font-semibold text-gray-800 mb-2">Completing sign in...</h2>
-            <p className="text-gray-600">Please wait while we set up your account.</p>
+            <div className={styles.spinner} aria-hidden="true"></div>
+            <h2 className={styles.title}>Completing sign in...</h2>
+            <p className={styles.subtitle}>Please wait while we set up your account.</p>
           </>
         )}
       </div>

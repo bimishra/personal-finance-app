@@ -3,6 +3,7 @@ import { Account } from './types';
 import { formatCurrency } from '@/utils/currency';
 import Card from '@/components/Card';
 import { AccountActions } from './AccountActions';
+import styles from './AccountList.module.css';
 
 interface AccountListProps {
   accounts: Account[];
@@ -23,7 +24,7 @@ export const AccountList: React.FC<AccountListProps> = ({ accounts }) => {
 
   if (accounts.length === 0) {
     return (
-      <div className="text-center text-gray-500 mt-8">
+      <div className={styles.empty}>
         No accounts found. Create your first account to get started!
       </div>
     );
@@ -49,49 +50,49 @@ export const AccountList: React.FC<AccountListProps> = ({ accounts }) => {
     }, [account.name]);
 
     return (
-      <Card key={account.id} className="h-full overflow-hidden">
-        <div className="p-4 group hover:shadow-md transition-shadow duration-150 ease-in-out">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-4 min-w-0">
-              <div aria-hidden className="w-12 h-12 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-700 font-semibold text-lg">{(account.name || '').slice(0,2).toUpperCase()}</div>
+      <Card key={account.id} className={styles.card}>
+        <div className={styles.cardInner}>
+          <div className={styles.headerRow}>
+            <div className={styles.left}>
+              <div aria-hidden className={styles.avatar}>{(account.name || '').slice(0,2).toUpperCase()}</div>
 
-              <div className="min-w-0">
+              <div className={styles.nameBlock}>
                 <h3
                   ref={nameRef}
-                  className="text-sm font-medium text-gray-900 truncate"
+                  className={styles.name}
                   title={isTruncated ? account.name : undefined}
                   aria-label={account.name}
                 >
                   {account.name}
                 </h3>
-                <div className="mt-1 flex items-center gap-2">
-                  <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full ${getAccountTypeColor(account.type)}`}>
+                <div className={styles.meta}>
+                  <span className={`${styles.typeBadge} ${getAccountTypeColor(account.type)}`}>
                     {account.type.replace('_', ' ')}
                   </span>
                   {account.transactionCount !== undefined && (
-                    <span className="text-xs text-gray-500">{account.transactionCount} txn{account.transactionCount !== 1 ? 's' : ''}</span>
+                    <span className={styles.txnCount}>{account.transactionCount} txn{account.transactionCount !== 1 ? 's' : ''}</span>
                   )}
                 </div>
               </div>
             </div>
 
-            <div className="text-right">
-              <div className="text-sm text-gray-500">Balance</div>
-              <div className="text-lg font-semibold text-gray-900">{formatCurrency(account.balance, account.currency)}</div>
-              <div className="text-xs text-gray-500 mt-1">{account.currency}</div>
+            <div className={styles.balanceBlock}>
+              <div className={styles.balanceLabel}>Balance</div>
+              <div className={styles.balanceAmount}>{formatCurrency(account.balance, account.currency)}</div>
+              <div className={styles.balanceCurrency}>{account.currency}</div>
             </div>
           </div>
 
-          <div className="mt-4 flex items-center justify-between">
-            <div className="text-xs text-gray-500">
+          <div className={styles.footerRow}>
+            <div className={styles.createdAt + (account.createdAt ? '' : ' ' + styles.italic)}>
               {account.createdAt ? (
                 <div>Created: {new Date(account.createdAt).toLocaleDateString()}</div>
               ) : (
-                <div className="italic text-gray-400">No created date</div>
+                <div className={styles.italic}>No created date</div>
               )}
             </div>
 
-            <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className={styles.actions}>
               <AccountActions
                 account={account}
                 hasTransactions={Boolean(account.transactionCount)}

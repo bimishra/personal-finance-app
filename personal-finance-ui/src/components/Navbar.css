@@ -1,0 +1,44 @@
+/* Component-scoped styles for Navbar using Tailwind's @apply */
+.navbar {
+  @apply bg-white shadow;
+}
+
+.navbar-container {
+  @apply mx-auto px-4 py-4 max-w-7xl flex items-center justify-between;
+}
+
+.brand {
+  @apply text-2xl font-bold text-indigo-600;
+}
+
+.nav-links {
+  @apply hidden md:flex gap-3 text-sm text-gray-600;
+}
+
+.nav-links a {
+  @apply hover:text-indigo-600;
+}
+
+.user-area {
+  @apply flex items-center gap-3;
+}
+
+.user-name {
+  @apply text-sm text-gray-700;
+}
+
+.logout-btn {
+  @apply px-3 py-1 border rounded text-sm transition-all duration-200;
+}
+
+.logout-btn.disabled {
+  @apply bg-gray-100 text-gray-400 cursor-not-allowed;
+}
+
+.logout-btn:not(.disabled):hover {
+  @apply bg-gray-50 border-gray-300;
+}
+
+.spinner {
+  @apply animate-spin rounded-full h-3 w-3 border-t border-b border-gray-400;
+}

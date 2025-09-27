@@ -8,6 +8,7 @@ import TransactionForm from './TransactionForm'
 import { IconButton } from '@/components/IconButton'
 import { Icons } from '@/components/Icons'
 import { useCurrency } from '@/context/CurrencyContext'
+import styles from './TransactionTable.module.css'
 
 interface Props {
   transactions: Transaction[];
@@ -77,14 +78,14 @@ export default function TransactionTable({ transactions, onEdit, onDelete }: Pro
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-100">
+    <div className={styles.root}>
       {/* Filter & Bulk Delete */}
-      <div className="flex flex-wrap items-center justify-between p-3 border-b gap-3">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-gray-700">Account</label>
+      <div className={styles.filterBar}>
+        <div className={styles.filterLeft}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            {/* <label className="text-sm font-medium text-gray-700">Account</label> */}
             <select
-              className="block w-40 pl-3 pr-8 py-2 text-sm border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 rounded-md"
+              className={styles.select}
               value={selectedAccount}
               onChange={e => setSelectedAccount(e.target.value)}
             >
@@ -95,12 +96,12 @@ export default function TransactionTable({ transactions, onEdit, onDelete }: Pro
             </select>
           </div>
 
-          <div className="text-sm text-gray-500">{selectedTxns.size} selected</div>
+          <div className={styles.selectedCount}>{selectedTxns.size} selected</div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className={styles.filterRight}>
           <button
-            className="inline-flex items-center px-3 py-2 text-sm font-medium rounded-md text-red-600 bg-red-50 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+            className={styles.bulkDeleteBtn}
             onClick={handleBulkDelete}
             disabled={selectedTxns.size === 0}
           >
@@ -113,14 +114,14 @@ export default function TransactionTable({ transactions, onEdit, onDelete }: Pro
       </div>
 
       {/* Table */}
-      <div className="w-full overflow-hidden">
-        <table className="w-full divide-y divide-gray-200 table-fixed">
+      <div className={styles.tableWrap}>
+        <table className={styles.table}>
           <thead>
-            <tr className="bg-gray-50">
-              <th scope="col" className="w-12 px-2 py-2 text-center">
+            <tr className={styles.theadRow}>
+              <th scope="col" className={`${styles.th} ${styles.thCenter}`}>
                 <input
                   type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                  className={styles.checkbox}
                   checked={selectedTxns.size === filteredTxns.length && filteredTxns.length > 0}
                   onChange={e => {
                     if (e.target.checked) setSelectedTxns(new Set(filteredTxns.map(t => t.id)))
@@ -128,40 +129,39 @@ export default function TransactionTable({ transactions, onEdit, onDelete }: Pro
                   }}
                 />
               </th>
-              <th scope="col" className="w-24 px-2 py-2 text-left text-sm font-medium text-gray-500">Date</th>
-              <th scope="col" className="w-36 px-2 py-2 text-left text-sm font-medium text-gray-500">Account</th>
-              <th scope="col" className="px-2 py-2 text-left text-sm font-medium text-gray-500">Description</th>
-              <th scope="col" className="w-28 px-2 py-2 text-right text-sm font-medium text-gray-500">Amount</th>
-              <th scope="col" className="w-20 px-2 py-2 text-center text-sm font-medium text-gray-500">Actions</th>
+              <th scope="col" className={`${styles.th} ${styles.th} `}>Date</th>
+              <th scope="col" className={`${styles.th}`}>Account</th>
+              <th scope="col" className={styles.th}>Description</th>
+              <th scope="col" className={`${styles.th} ${styles.thRight}`}>Amount</th>
+              <th scope="col" className={`${styles.th} ${styles.thCenter}`}>Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 bg-white">
+          <tbody>
             {filteredTxns.map(t => (
-              <tr key={t.id} className="hover:bg-gray-50 transition-colors duration-150">
-                <td className="px-2 py-2 text-center align-middle">
+              <tr key={t.id} className={styles.trHover}>
+                <td className={`${styles.td} ${styles.tdCenter}`}>
                   <input
                     type="checkbox"
-                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                    className={styles.checkbox}
                     checked={selectedTxns.has(t.id)}
                     onChange={() => toggleSelect(t.id)}
                   />
                 </td>
-                <td className="px-2 py-2 text-sm text-gray-900">{t.txnDate}</td>
-                <td className="px-2 py-2 text-sm text-gray-500 truncate">{accounts.find(a => a.id === t.accountId)?.name || '—'}</td>
-                <td className="px-2 py-2 text-sm text-gray-900 truncate max-w-[40ch]">{t.description}</td>
-                <td className="px-2 py-2 text-sm font-medium text-right whitespace-nowrap">
-                  <span className={`inline-flex items-center px-2 py-1 rounded-md text-sm font-medium ${t.type === 'CREDIT' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                <td className={`${styles.td}`}>{t.txnDate}</td>
+                <td className={`${styles.td} ${styles.tdTruncate}`}>{accounts.find(a => a.id === t.accountId)?.name || '\u2014'}</td>
+                <td className={`${styles.td} ${styles.tdDesc}`}>{t.description}</td>
+                <td className={`${styles.td} ${styles.tdRight}`}>
+                  <span className={`${styles.amountBadge} ${t.type === 'CREDIT' ? styles.amountCredit : styles.amountDebit}`}>
                     {t.type === 'CREDIT' ? '+' : '-'}{formatAmount(t.amount)}
                   </span>
                 </td>
-                <td className="px-2 py-2 text-sm text-center">
-                  <div className="flex justify-center items-center space-x-1">
+                <td className={`${styles.td} ${styles.tdCenter}`}>
+                  <div className={styles.iconButtons}>
                     <IconButton
                       onClick={() => setEditingTxn(t)}
                       label="Edit Transaction"
                       icon={<Icons.Edit className="w-4 h-4" />}
                       tooltip="Edit this transaction"
-                      className="hover:bg-blue-50"
                     />
                     <IconButton
                       onClick={() => handleDelete(t.id)}
@@ -169,7 +169,6 @@ export default function TransactionTable({ transactions, onEdit, onDelete }: Pro
                       icon={<Icons.Delete className="w-4 h-4" />}
                       variant="danger"
                       tooltip="Delete this transaction"
-                      className="hover:bg-red-50"
                     />
                   </div>
                 </td>
@@ -177,7 +176,7 @@ export default function TransactionTable({ transactions, onEdit, onDelete }: Pro
             ))}
             {!filteredTxns.length && (
               <tr>
-                <td className="px-3 py-8 text-center text-sm text-gray-500" colSpan={6}>No transactions found</td>
+                <td className={styles.emptyRow} colSpan={6}>No transactions found</td>
               </tr>
             )}
           </tbody>

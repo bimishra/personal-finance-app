@@ -13,6 +13,8 @@ import TransactionForm from '@/features/transactions/TransactionForm';
 import { TransactionList } from '@/features/transactions/TransactionList';
 import toast from 'react-hot-toast';
 import SearchInput from '@/components/SearchInput';
+import styles from './Transactions.module.css';
+import layout from '@/styles/layout.module.css';
 
 export default function Transactions() {
   const dispatch = useAppDispatch();
@@ -75,20 +77,20 @@ export default function Transactions() {
   });
 
   return (
-    <div>
-      <div className="mb-6 space-y-4">
-        <div className="flex items-center justify-between border-b border-gray-200 pb-4">
+    <div className={layout.container}>
+      <div className={styles.spacer}>
+        <div className={styles.headerWrapper}>
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900 leading-tight">Transactions</h1>
-            <p className="mt-1 text-sm text-gray-600">Manage your income and expense transactions</p>
+            <h1 className={styles.headerTitle}>Transactions</h1>
+            <p className={styles.headerSub}>Manage your income and expense transactions</p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className={styles.headerRight}>
             <SearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search transactions" ariaLabel="Search transactions" onClear={() => setQuery('')} />
 
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
+              className={styles.newBtn}
             >
               <svg 
                 className="w-4 h-4 mr-2" 

@@ -1,0 +1,10 @@
+.root { display:flex; align-items:center; justify-content:center; min-height:100vh; background:#F9FAFB; padding:1rem; }
+.card { text-align:center; background:#fff; padding:2rem; border-radius:0.5rem; box-shadow:0 4px 12px rgba(0,0,0,0.06); max-width:28rem; width:100%; }
+.spinner { width:3rem; height:3rem; border-radius:9999px; border-top:0.25rem solid #4f46e5; border-bottom:0.25rem solid #4f46e5; animation: spin 1s linear infinite; margin:0 auto 1rem; }
+.title { font-size:1.125rem; font-weight:600; color:#1f2937; margin-bottom:0.5rem; }
+.subtitle { color:#4b5563; }
+.errorIcon { color:#dc2626; font-size:2.25rem; margin-bottom:0.5rem; }
+.errorHeading { color:#b91c1c; font-weight:600; margin-bottom:0.5rem; font-size:1.125rem; }
+.errorText { color:#4b5563; margin-bottom:0.5rem; }
+.smallMuted { color:#6b7280; font-size:0.875rem; }
+@keyframes spin { to { transform: rotate(360deg); } }

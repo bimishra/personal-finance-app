@@ -1,6 +1,8 @@
 import React from 'react';
 import { CategoryListItem, CategoryFormData } from './types';
 import { CategoryActions } from './CategoryActions';
+import styles from './CategoryList.module.css';
+import layout from '@/styles/layout.module.css';
 
 interface CategoryListProps {
   categories: CategoryListItem[];
@@ -15,16 +17,16 @@ export const CategoryList: React.FC<CategoryListProps> = ({
 }) => {
   if (categories.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 flex items-center justify-center p-12">
-        <div className="text-center max-w-sm">
-          <div className="mx-auto w-16 h-16 flex items-center justify-center rounded-full bg-gray-100 mb-4">
-            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className={styles.emptyContainer}>
+        <div className={styles.emptyInner}>
+          <div className={styles.emptyIcon}>
+            <svg className={layout.svgMd} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} 
                 d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-1">No Categories Yet</h3>
-          <p className="text-sm text-gray-500">
+          <h3 className={`${styles.emptyTitle} ${layout.textSm}`}>No Categories Yet</h3>
+          <p className={`${styles.emptySubtitle} ${layout.textSm}`}>
             Get started by creating your first category to organize your transactions.
           </p>
         </div>
@@ -34,41 +36,39 @@ export const CategoryList: React.FC<CategoryListProps> = ({
 
   return (
     <div className="space-y-4">
-  <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-visible">
-        <div className="divide-y divide-gray-100">
+      <div className={styles.card}>
+        <div className={styles.divide}>
           {categories.map((category) => (
-            <div key={category.id} className="flex items-center px-4 py-3 hover:bg-gray-50 transition-colors">
-              <div className="flex items-center gap-4 flex-1 min-w-0">
-                <div className={`flex items-center justify-center w-10 h-10 rounded-full shadow-sm ${
-                  category.type === 'INCOME' ? 'bg-emerald-50' : 'bg-rose-50'
-                }`}>
-                  <div className={`w-2.5 h-2.5 rounded-full ${category.type === 'INCOME' ? 'bg-emerald-500' : 'bg-rose-500'}`} />
+            <div key={category.id} className={`${styles.row} ${styles.rowHover}`}>
+              <div className={styles.left}>
+                <div className={`${styles.avatar} ${category.type === 'INCOME' ? styles.avatarIncome : styles.avatarExpense}`}>
+                  <div className={`${styles.dot} ${category.type === 'INCOME' ? styles.dotIncome : styles.dotExpense}`} />
                 </div>
-                <div>
-                  <div className="text-sm font-medium text-gray-900 truncate">{category.name}</div>
-                  <div className="text-xs text-gray-500 truncate">{category.description || ''}</div>
+                <div className={styles.meta}>
+                  <div className={styles.name}>{category.name}</div>
+                  <div className={styles.desc}>{category.description || ''}</div>
                 </div>
               </div>
 
-              <div className="flex items-center justify-center w-32 flex-shrink-0">
-                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                  category.type === 'INCOME' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'
-                }`}>{category.type === 'INCOME' ? 'Income' : 'Expense'}</span>
+              <div className={styles.typeCol}>
+                <span className={`${styles.badge} ${category.type === 'INCOME' ? styles.badgeIncome : styles.badgeExpense}`}>
+                  {category.type === 'INCOME' ? 'Income' : 'Expense'}
+                </span>
               </div>
 
-              <div className="flex items-center justify-center w-48 flex-shrink-0">
+              <div className={styles.transactionsCol}>
                 {category.transactionCount ? (
-                  <span className="inline-flex items-center gap-2 px-2 py-1 bg-gray-50 text-sm text-gray-700 rounded-md shadow-sm">
-                    <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-semibold rounded-full bg-white text-gray-800 border border-gray-100">{category.transactionCount}</span>
-                    <span className="text-sm text-gray-500">{category.transactionCount === 1 ? 'transaction' : 'transactions'}</span>
+                  <span className={styles.txnBadge}>
+                    <span className={styles.txnCount}>{category.transactionCount}</span>
+                    <span className={styles.txnText}>{category.transactionCount === 1 ? 'transaction' : 'transactions'}</span>
                   </span>
                 ) : (
-                  <span className="text-sm text-gray-400">No transactions</span>
+                  <span className={styles.noTxn}>No transactions</span>
                 )}
               </div>
 
-              <div className="flex items-center justify-end w-28 flex-shrink-0">
-                <div className="inline-flex items-center gap-2">
+              <div className={styles.actionsCol}>
+                <div className={styles.actionsInner}>
                   <CategoryActions
                     category={category}
                     hasTransactions={Boolean(category.transactionCount)}

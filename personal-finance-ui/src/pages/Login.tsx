@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { initAuth, isAuthenticated } from '../services/auth'
 import { useUser } from '../context/UserContext'
 import LoginModal from '../components/LoginModal'
+import styles from './Login.module.css'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -36,8 +37,8 @@ export default function Login() {
 
   if (isLoading || isInitializing) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-600"></div>
+      <div className={styles.spinnerWrap}>
+        <div className={styles.spinner}></div>
       </div>
     )
   }
@@ -54,16 +55,13 @@ export default function Login() {
 
   return (
     <>
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="text-center bg-white p-8 rounded-lg shadow-md max-w-md w-full mx-4">
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome to Personal Finance</h1>
-            <p className="text-gray-600">Manage your finances with ease</p>
+      <div className={styles.root}>
+        <div className={styles.card}>
+          <div className={styles.hero}>
+            <h1 className={styles.title}>Welcome to Personal Finance</h1>
+            <p className={styles.subtitle}>Manage your finances with ease</p>
           </div>
-          <button
-            onClick={handleLoginClick}
-            className="w-full px-6 py-3 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
-          >
+          <button onClick={handleLoginClick} className={styles.primaryBtn}>
             Sign in to continue
           </button>
         </div>

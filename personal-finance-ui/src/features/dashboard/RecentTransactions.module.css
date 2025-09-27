@@ -1,0 +1,29 @@
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.divider > li:not(:last-child) {
+  border-bottom: 1px solid #e5e7eb; /* replicate divide-y */
+}
+.item {
+  padding: 0.75rem 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.left {
+  display: block;
+}
+.title {
+  font-weight: 600;
+}
+.date {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+.amount {
+  font-weight: 600;
+}
+.credit { color: #16a34a; } /* green-600 */
+.debit { color: #dc2626; }  /* red-600 */

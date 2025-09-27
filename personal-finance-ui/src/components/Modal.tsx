@@ -1,18 +1,19 @@
 import React from 'react'
+import styles from './Modal.module.css'
 
 export default function Modal({ open, onClose, title, children }: { open: boolean; onClose: () => void; title?: string; children?: React.ReactNode }) {
   if (!open) return null
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
-        <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-          <div className="bg-white px-4 pb-4 pt-5 sm:p-6">
-            <div className="flex justify-between items-center mb-5">
-              <h3 className="text-lg font-semibold leading-6 text-gray-900">{title}</h3>
+    <div className={styles.backdrop}>
+      <div className={styles.center}>
+        <div className={styles.overlay}></div>
+        <div className={styles.panel}>
+          <div className={styles.content}>
+            <div className={styles.headerRow}>
+              <h3 className={styles.title}>{title}</h3>
               <button
                 onClick={onClose}
-                className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                className={styles.closeBtn}
               >
                 <span className="sr-only">Close</span>
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">

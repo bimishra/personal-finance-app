@@ -1,0 +1,102 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.5);
+}
+
+.panel {
+  background: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 28rem;
+  margin: 0 1rem;
+  padding: 2rem;
+  position: relative;
+}
+
+.headerCenter {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.avatar {
+  margin: 0 auto 1rem auto;
+  width: 4rem;
+  height: 4rem;
+  background: #eef2ff; /* indigo-100 */
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827; /* gray-900 */
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: #4b5563; /* gray-600 */
+}
+
+.errorBox {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #ffeded;
+  border: 1px solid #fecaca;
+  border-radius: 0.5rem;
+}
+
+.errorText {
+  color: #991b1b;
+  font-size: 0.875rem;
+}
+
+.primaryBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  color: #ffffff;
+  background: #4f46e5; /* indigo-600 */
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+.primaryBtn:hover { background: #4338ca; box-shadow: 0 6px 12px rgba(67,56,202,0.12); transform: translateY(-2px); }
+
+.primaryBtn.disabled { background: #a78bfa; cursor: not-allowed; }
+
+.spinnerSmall {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 9999px;
+  border-top: 2px solid rgba(255,255,255,0.9);
+  border-bottom: 2px solid rgba(255,255,255,0.9);
+  animation: spin 1s linear infinite;
+  margin-right: 0.5rem;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.features {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  text-align: center;
+}
+
+.auth0Badge { display:flex; align-items:center; justify-content:center; gap:0.5rem; }
+
+.closeBtn { position: absolute; top: 1rem; right: 1rem; color: #9ca3af; }

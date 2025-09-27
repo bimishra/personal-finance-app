@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import { updateAccount, deleteAccount } from '@/state/slices/countSlice';
 import { IconButton } from '@/components/IconButton';
 import { Icons } from '@/components/Icons';
+import styles from './AccountActions.module.css';
 
 interface AccountActionsProps {
   account: Account;
@@ -81,7 +82,7 @@ export const AccountActions: React.FC<AccountActionsProps> = ({
 
   return (
     <>
-      <div className="flex space-x-1">
+      <div className={styles.row}>
         <IconButton
           onClick={() => setIsEditModalOpen(true)}
           label="Edit Account"
@@ -100,9 +101,9 @@ export const AccountActions: React.FC<AccountActionsProps> = ({
         onClose={() => setIsEditModalOpen(false)}
         title="Edit Account Name"
       >
-        <div className="p-6">
+        <div className={styles.modalBody}>
           <div className="mb-4">
-            <label htmlFor="accountName" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="accountName" className={styles.label}>
               Account Name
             </label>
             <input
@@ -110,20 +111,20 @@ export const AccountActions: React.FC<AccountActionsProps> = ({
               id="accountName"
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              className={styles.input}
               placeholder="Enter account name"
             />
           </div>
-          <div className="flex justify-end space-x-3">
+          <div className={styles.btnRow}>
             <button
               onClick={() => setIsEditModalOpen(false)}
-              className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className={`${styles.btn} ${styles.btnCancel}`}
             >
               Cancel
             </button>
             <button
               onClick={handleUpdateName}
-              className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className={`${styles.btn} ${styles.btnPrimary}`}
             >
               Save Changes
             </button>

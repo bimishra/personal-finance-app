@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import styles from './IconButton.module.css';
 
 interface IconButtonProps {
   onClick: () => void;
@@ -19,34 +20,27 @@ export const IconButton: React.FC<IconButtonProps> = ({
   disabled = false,
   tooltip,
 }) => {
-  const baseClasses = 'p-2 rounded-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1';
-  const variantClasses = {
-    default: disabled
-      ? 'bg-gray-50 text-gray-400 cursor-not-allowed'
-      : 'text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 active:bg-indigo-100 focus:ring-indigo-500',
-    danger: disabled
-      ? 'bg-gray-50 text-gray-400 cursor-not-allowed'
-      : 'text-gray-600 hover:text-red-600 hover:bg-red-50 active:bg-red-100 focus:ring-red-500',
-  };
+  const [showTooltip, setShowTooltip] = useState(false);
+
+  const variantClass = disabled ? styles.disabled : variant === 'danger' ? styles.danger : styles.default;
 
   return (
-    <div className="relative inline-flex items-center">
+    <div className={styles.container} onMouseEnter={() => setShowTooltip(true)} onMouseLeave={() => setShowTooltip(false)}>
       <button
         onClick={onClick}
-        className={`peer ${baseClasses} ${variantClasses[variant]} ${className}`}
+        className={`${styles.button} ${variantClass} ${className}`}
         aria-label={label}
         disabled={disabled}
+        onFocus={() => setShowTooltip(true)}
+        onBlur={() => setShowTooltip(false)}
       >
         {icon}
       </button>
 
       {tooltip && (
-        <div
-          role="tooltip"
-          className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1.5 text-xs font-medium text-white bg-gray-900 rounded-md opacity-0 invisible peer-hover:opacity-100 peer-focus:opacity-100 peer-hover:visible peer-focus:visible transition-opacity duration-150 z-[100] whitespace-nowrap shadow-lg pointer-events-none"
-        >
+        <div role="tooltip" className={`${styles.tooltip} ${showTooltip ? styles.tooltipVisible : ''}`}>
           {tooltip}
-          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-gray-900"></div>
+          <div className={styles.tooltipArrow}></div>
         </div>
       )}
     </div>

@@ -3,6 +3,7 @@ import api from '../services/api'
 import dayjs from 'dayjs'
 import { formatCurrency } from '@/utils/currency'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, CartesianGrid } from 'recharts'
+import styles from './Reports.module.css'
 
 export default function Reports() {
   const [from, setFrom] = useState(dayjs().startOf('month').format('YYYY-MM-DD'))
@@ -95,54 +96,54 @@ export default function Reports() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className={styles.header}>
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Reports</h1>
-          <p className="mt-1 text-sm text-gray-600">Run financial reports and visualise income vs expense for a date range.</p>
+          <h1 className={styles.title}>Reports</h1>
+          <p className={styles.subtitle}>Run financial reports and visualise income vs expense for a date range.</p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="inline-flex items-center gap-2 bg-white border border-gray-200 rounded-md px-3 py-1">
-            <label className="text-xs text-gray-500">From</label>
-            <input type="date" value={from} onChange={e => setFrom(e.target.value)} className="text-sm" />
+        <div className={styles.controls}>
+          <div className={styles.dateGroup}>
+            <label className={styles.dateLabel}>From</label>
+            <input type="date" value={from} onChange={e => setFrom(e.target.value)} className={styles.dateInput} />
           </div>
 
-          <div className="inline-flex items-center gap-2 bg-white border border-gray-200 rounded-md px-3 py-1">
-            <label className="text-xs text-gray-500">To</label>
-            <input type="date" value={to} onChange={e => setTo(e.target.value)} className="text-sm" />
+          <div className={styles.dateGroup}>
+            <label className={styles.dateLabel}>To</label>
+            <input type="date" value={to} onChange={e => setTo(e.target.value)} className={styles.dateInput} />
           </div>
 
-          <button onClick={load} className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md shadow-sm hover:bg-indigo-700">Run</button>
+          <button onClick={load} className={styles.runBtn}>Run</button>
         </div>
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-          <div className="text-sm text-gray-500">Income</div>
-          <div className="text-2xl font-semibold text-gray-900">{formatCurrency(summary?.income || 0, '')}</div>
+      <div className={styles.summaryGrid}>
+        <div className={styles.card}>
+          <div className={styles.cardLabel}>Income</div>
+          <div className={styles.cardValue}>{formatCurrency(summary?.income || 0, '')}</div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-          <div className="text-sm text-gray-500">Expense</div>
-          <div className="text-2xl font-semibold text-gray-900">{formatCurrency(summary?.expense || 0, '')}</div>
+        <div className={styles.card}>
+          <div className={styles.cardLabel}>Expense</div>
+          <div className={styles.cardValue}>{formatCurrency(summary?.expense || 0, '')}</div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-          <div className="text-sm text-gray-500">Net</div>
-          <div className="text-2xl font-semibold text-gray-900">{formatCurrency(summary?.net || 0, '')}</div>
+        <div className={styles.card}>
+          <div className={styles.cardLabel}>Net</div>
+          <div className={styles.cardValue}>{formatCurrency(summary?.net || 0, '')}</div>
         </div>
       </div>
 
       {/* Charts and details */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="col-span-2 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-          <h3 className="text-sm font-medium text-gray-800 mb-3">Income / Expense over time</h3>
-          <div style={{ height: 320 }}>
+      <div className={styles.chartsGrid}>
+        <div className={styles.colSpan2 + ' ' + styles.card}>
+          <h3 className={styles.sectionTitle}>Income / Expense over time</h3>
+          <div className={styles.chartWrapper}>
             {loading ? (
-              <div className="flex items-center justify-center h-full text-sm text-gray-500">Loading chart…</div>
+              <div className={styles.chartEmpty}>Loading chart…</div>
             ) : timeseries.length === 0 ? (
-              <div className="flex items-center justify-center h-full text-sm text-gray-500">No timeseries data for the selected date range.</div>
+              <div className={styles.chartEmpty}>No timeseries data for the selected date range.</div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={timeseries}>
@@ -183,25 +184,25 @@ export default function Reports() {
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-          <h3 className="text-sm font-medium text-gray-800 mb-3">Top categories</h3>
+        <div className={styles.card}>
+          <h3 className={styles.sectionTitle}>Top categories</h3>
           {summary?.topCategories?.length ? (
-            <ul className="space-y-3">
+            <ul className={styles.list}>
               {summary.topCategories.map((c: any) => (
-                <li key={c.id} className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm font-medium text-gray-700">{(c.name || '').slice(0,2).toUpperCase()}</div>
+                <li key={c.id} className={styles.listItem}>
+                  <div className={styles.listLeft}>
+                    <div className={styles.avatar}>{(c.name || '').slice(0,2).toUpperCase()}</div>
                     <div>
-                      <div className="text-sm text-gray-900">{c.name}</div>
-                      <div className="text-xs text-gray-500">{c.count} transactions</div>
+                      <div className={styles.listName}>{c.name}</div>
+                      <div className={styles.listMeta}>{c.count} transactions</div>
                     </div>
                   </div>
-                  <div className="text-sm font-medium text-gray-900">{formatCurrency(c.total, '')}</div>
+                  <div className={styles.listValue}>{formatCurrency(c.total, '')}</div>
                 </li>
               ))}
             </ul>
           ) : (
-            <div className="text-sm text-gray-500">No category data</div>
+            <div className={styles.noData}>No category data</div>
           )}
         </div>
       </div>

@@ -4,6 +4,8 @@ import toast from 'react-hot-toast';
 import { Category } from '@/types';
 import { CategoryFormData } from './types';
 import Modal from '@/components/Modal';
+import styles from './CategoryForm.module.css';
+import layout from '@/styles/layout.module.css';
 
 interface CategoryFormProps {
   initialValues?: CategoryFormData;
@@ -67,36 +69,36 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
 
   return (
     <Modal open={open} onClose={onClose} title={initialValues ? 'Edit Category' : 'New Category'}>
-      <form onSubmit={handleSubmit} className="space-y-5 w-full max-w-md mx-auto py-2">
-        <div className="text-left">
-          <label htmlFor="name" className="block text-left text-sm font-medium text-gray-900 mb-1.5">Name</label>
+      <form onSubmit={handleSubmit} className={styles.form}>
+        <div className={styles.field}>
+          <label htmlFor="name" className={styles.label}>Name</label>
           <input
             id="name"
             name="name"
             type="text"
             value={form.name}
             onChange={handleChange}
-            className="block w-full px-3 py-2 text-sm rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 sm:text-sm"
+            className={`${styles.input} ${styles.smText}`}
             placeholder="Enter category name"
             required
           />
         </div>
 
-        <div className="text-left">
-          <label htmlFor="type" className="block text-left text-sm font-medium text-gray-900 mb-1.5">Type</label>
-          <div className="relative">
+        <div className={styles.field}>
+          <label htmlFor="type" className={styles.label}>Type</label>
+          <div className={styles.selectWrapper}>
             <select
               id="type"
               name="type"
               value={form.type}
               onChange={handleChange}
-              className="block w-full px-3 py-2 text-sm rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 sm:text-sm appearance-none bg-white pr-8"
+              className={`${styles.input} ${styles.select}`}
             >
               <option value="EXPENSE">Expense</option>
               <option value="INCOME">Income</option>
             </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-              <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+            <div className={styles.selectIcon}>
+              <svg className={layout.svgSm} fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
               </svg>
             </div>
@@ -105,31 +107,31 @@ const CategoryForm: React.FC<CategoryFormProps> = ({
 
         {/* Keep Open checkbox (only for create) */}
         {!initialValues && (
-          <div className="pt-1">
-            <label className="flex items-center space-x-2 text-sm text-gray-600 cursor-pointer select-none">
+          <div className={styles.keepOpen}>
+            <label className={`${styles.checkboxLabel} ${layout.textSm}`}>
               <input
                 type="checkbox"
                 checked={keepOpen}
                 onChange={e => setKeepOpen(e.target.checked)}
-                className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 h-4 w-4"
+                className={styles.checkbox}
               />
               <span>Keep open to add another</span>
             </label>
           </div>
         )}
 
-        <div className="flex justify-end gap-3 pt-2">
+        <div className={styles.actions}>
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            className={styles.btnCancel}
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={submitting}
-            className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className={styles.btnPrimary}
           >
             {submitting ? 'Saving...' : initialValues ? 'Save' : 'Create'}
           </button>

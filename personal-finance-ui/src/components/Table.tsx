@@ -1,20 +1,21 @@
 import React from 'react'
+import styles from './Table.module.css'
 
 export default function Table<T>({ columns, data }: { columns: { key: keyof T | string; label: string; render?: (row: T) => React.ReactNode }[]; data: T[] }) {
   return (
-    <table className="min-w-full divide-y divide-gray-200">
-      <thead className="bg-gray-50">
+    <table className={styles.table}>
+      <thead className={styles.thead}>
         <tr>
           {columns.map(col => (
-            <th key={String(col.key)} className="px-4 py-2 text-left text-sm font-medium text-gray-500">{col.label}</th>
+            <th key={String(col.key)} className={styles.th}>{col.label}</th>
           ))}
         </tr>
       </thead>
-      <tbody className="bg-white divide-y divide-gray-200">
+      <tbody className={styles.tbody}>
         {data.map((row, idx) => (
-          <tr key={idx} className="hover:bg-gray-50">
+          <tr key={idx} className={styles.trHover}>
             {columns.map(col => (
-              <td key={String(col.key)} className="px-4 py-2 text-sm text-gray-700">
+              <td key={String(col.key)} className={styles.td}>
                 {col.render ? col.render(row) : (row as any)[col.key]}
               </td>
             ))}

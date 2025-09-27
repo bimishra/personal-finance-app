@@ -13,6 +13,7 @@ import type { Account, Transaction } from '@/types';
 import Modal from '@/components/Modal';
 import { AccountForm } from '@/features/accounts/AccountForm';
 import { useAccountForm } from '@/features/accounts/useAccountForm';
+import styles from './Dashboard.module.css';
 
 
 export default function Dashboard() {
@@ -110,16 +111,16 @@ export default function Dashboard() {
     accounts.find((a) => a.id === accountId)?.currency;
 
   return (
-    <div className="space-y-6">
+    <div className={styles.root}>
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className={styles.header}>
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
-          <p className="mt-1 text-sm text-gray-600">Overview of balances, cashflow and recent activity.</p>
+          <h1 className={styles.headerTitle}>Dashboard</h1>
+          <p className={styles.headerSubtitle}>Overview of balances, cashflow and recent activity.</p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="inline-flex items-center gap-2 bg-white border border-gray-200 rounded-md px-3 py-1">
+        <div className={styles.headerControls}>
+          <div className={styles.timeframe}>
             <label className="text-xs text-gray-500">Timeframe</label>
             <select value={timeframe} onChange={(e) => setTimeframe(e.target.value as any)} className="text-sm bg-transparent">
               <option value="month">Past Month</option>
@@ -127,44 +128,44 @@ export default function Dashboard() {
             </select>
           </div>
 
-          <button onClick={exportCsv} className="inline-flex items-center px-4 py-2 bg-white border border-gray-200 rounded-md shadow-sm text-sm hover:bg-gray-50">
+          <button onClick={exportCsv} className={styles.btnExport}>
             Export
           </button>
         </div>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 flex items-center justify-between">
+      <div className={styles.kpiGrid}>
+        <div className={styles.kpiCard}>
           <div>
-            <div className="text-xs text-gray-500">Income ({timeframe === 'month' ? 'This month' : 'This year'})</div>
+            <div className={styles.kpiMeta}>Income ({timeframe === 'month' ? 'This month' : 'This year'})</div>
             <div className="text-xl font-semibold text-green-700">{formatCurrency(totals.income, '')}</div>
           </div>
           <div className="text-green-100 bg-green-50 rounded-full w-10 h-10 flex items-center justify-center">⤴</div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 flex items-center justify-between">
+        <div className={styles.kpiCard}>
           <div>
-            <div className="text-xs text-gray-500">Expenses ({timeframe === 'month' ? 'This month' : 'This year'})</div>
+            <div className={styles.kpiMeta}>Expenses ({timeframe === 'month' ? 'This month' : 'This year'})</div>
             <div className="text-xl font-semibold text-red-600">{formatCurrency(totals.expense, '')}</div>
           </div>
           <div className="text-red-100 bg-red-50 rounded-full w-10 h-10 flex items-center justify-center">⤵</div>
         </div>
 
-        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 flex items-center justify-between">
+        <div className={styles.kpiCard}>
           <div>
-            <div className="text-xs text-gray-500">Net</div>
+            <div className={styles.kpiMeta}>Net</div>
             <div className={`text-xl font-semibold ${totals.net >= 0 ? 'text-gray-900' : 'text-red-600'}`}>{formatCurrency(totals.net, '')}</div>
           </div>
           <div className="text-indigo-100 bg-indigo-50 rounded-full w-10 h-10 flex items-center justify-center">Σ</div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        <div className="lg:col-span-3">
+      <div className={styles.mainGrid}>
+        <div>
           <Card title="Income & Expenses Overview">
             <div className="space-y-4">
-              <div className="flex justify-between items-center">
+              <div className={styles.cardInnerHeader}>
                 <div>
                   <div className="text-sm text-gray-500">Total Balance</div>
                   <div className="text-2xl font-bold">{formatCurrency(totalBalance, '')}</div>
@@ -172,21 +173,13 @@ export default function Dashboard() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => setTimeframe('month')}
-                    className={`px-3 py-1 rounded-md text-sm ${
-                      timeframe === 'month'
-                        ? 'bg-indigo-600 text-white'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
+                    className={`${styles.timeframeBtn} ${timeframe === 'month' ? styles.timeframeActive : styles.timeframeInactive}`}
                   >
                     Past Month
                   </button>
                   <button
                     onClick={() => setTimeframe('year')}
-                    className={`px-3 py-1 rounded-md text-sm ${
-                      timeframe === 'year'
-                        ? 'bg-indigo-600 text-white'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
+                    className={`${styles.timeframeBtn} ${timeframe === 'year' ? styles.timeframeActive : styles.timeframeInactive}`}
                   >
                     Past Year
                   </button>
@@ -227,14 +220,14 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="lg:col-span-1">
+        <div>
           <Card title="Accounts">
             <div className="space-y-4">
               <AccountsSummary accounts={accounts} />
               <div className="pt-2">
                 <button
                   onClick={() => setIsAccountModalOpen(true)}
-                  className="inline-flex items-center px-3 py-2 bg-indigo-600 text-white rounded-md text-sm hover:bg-indigo-700"
+                  className={styles.accountsCardBtn}
                 >
                   New account
                 </button>

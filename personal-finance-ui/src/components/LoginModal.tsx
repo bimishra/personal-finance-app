@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { loginWithPopup, loginRedirect, signupWithPopup } from '../services/auth';
+import styles from './LoginModal.module.css';
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -37,30 +38,30 @@ export default function LoginModal({ isOpen, onClose, onSuccess }: LoginModalPro
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 p-8">
+    <div className={styles.backdrop}>
+      <div className={styles.panel}>
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="mx-auto w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
+        <div className={styles.headerCenter}>
+          <div className={styles.avatar}>
             <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome Back</h2>
-          <p className="text-gray-600">Sign in to your Personal Finance account</p>
+          <h2 className={styles.title}>Welcome Back</h2>
+          <p className={styles.subtitle}>Sign in to your Personal Finance account</p>
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <div className="flex">
-              <div className="flex-shrink-0">
+          <div className={styles.errorBox}>
+            <div style={{ display: 'flex' }}>
+              <div style={{ flexShrink: 0 }}>
                 <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                 </svg>
               </div>
-              <div className="ml-3">
-                <p className="text-sm text-red-800">{error}</p>
+              <div style={{ marginLeft: '0.75rem' }}>
+                <p className={styles.errorText}>{error}</p>
               </div>
             </div>
           </div>
@@ -70,15 +71,11 @@ export default function LoginModal({ isOpen, onClose, onSuccess }: LoginModalPro
         <button
           onClick={handleLogin}
           disabled={isLoading}
-          className={`w-full flex items-center justify-center px-4 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white transition-all duration-200 ${
-            isLoading
-              ? 'bg-indigo-400 cursor-not-allowed'
-              : 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-lg transform hover:-translate-y-0.5'
-          }`}
+          className={`${styles.primaryBtn} ${isLoading ? 'disabled' : ''}`}
         >
           {isLoading ? (
             <>
-              <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></div>
+              <div className={styles.spinnerSmall}></div>
               Signing in...
             </>
           ) : (
@@ -92,14 +89,14 @@ export default function LoginModal({ isOpen, onClose, onSuccess }: LoginModalPro
         </button>
 
         {/* Features */}
-        <div className="mt-8 pt-6 border-t border-gray-200">
+        <div className={styles.features}>
           <div className="text-center">
             <p className="text-sm text-gray-500 mb-4">Secure authentication powered by</p>
-            <div className="flex items-center justify-center space-x-2">
-              <div className="w-8 h-8 bg-indigo-600 rounded flex items-center justify-center">
-                <span className="text-white text-xs font-bold">A0</span>
+            <div className={styles.auth0Badge}>
+              <div style={{ width: 32, height: 32, background: '#4f46e5', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <span style={{ color: '#fff', fontSize: 12, fontWeight: 700 }}>A0</span>
               </div>
-              <span className="text-sm font-medium text-gray-700">Auth0</span>
+              <span style={{ fontSize: 14, fontWeight: 500, color: '#374151' }}>Auth0</span>
             </div>
           </div>
         </div>
@@ -107,7 +104,7 @@ export default function LoginModal({ isOpen, onClose, onSuccess }: LoginModalPro
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+          className={styles.closeBtn}
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

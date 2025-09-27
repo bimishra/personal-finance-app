@@ -5,6 +5,7 @@ import CategoryForm from '@/features/categories/CategoryForm'
 import { CategoryList } from '@/features/categories/CategoryList'
 import { CategoryFormData } from '@/features/categories/types'
 import toast from 'react-hot-toast'
+import styles from './Categories.module.css'
 import { Category } from '@/types'
 
 export default function Categories() {
@@ -40,20 +41,20 @@ export default function Categories() {
 
   return (
     <div>
-      <div className="mb-6 space-y-4">
-        <div className="flex justify-between items-center border-b border-gray-200 pb-4">
+      <div className={styles.headerWrap}>
+        <div className={styles.headerRow}>
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900 leading-tight">Categories</h1>
-            <p className="mt-1 text-sm text-gray-600">
+            <h1 className={styles.title}>Categories</h1>
+            <p className={styles.subtitle}>
               Manage your income and expense categories
             </p>
           </div>
           <button
             onClick={() => setOpen(true)}
-            className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
+            className={styles.newBtn}
           >
             <svg 
-              className="w-4 h-4 mr-2" 
+              className={styles.icon} 
               viewBox="0 0 20 20" 
               fill="currentColor"
             >
@@ -62,8 +63,6 @@ export default function Categories() {
             New Category
           </button>
         </div>
-        
-        
       </div>
 
       <CategoryList 

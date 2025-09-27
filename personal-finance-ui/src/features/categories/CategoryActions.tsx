@@ -7,6 +7,7 @@ import { Icons } from '@/components/Icons';
 import toast from 'react-hot-toast';
 import { CategoryActionsProps } from './types';
 import CategoryForm from './CategoryForm';
+import listStyles from './CategoryList.module.css';
 
 export const CategoryActions: React.FC<CategoryActionsProps> = ({
   category,
@@ -32,7 +33,7 @@ export const CategoryActions: React.FC<CategoryActionsProps> = ({
 
   return (
     <>
-      <div className="flex items-center space-x-1">
+  <div className={listStyles.actionsWrap}>
         <IconButton
           onClick={() => setIsEditModalOpen(true)}
           label="Edit Category"

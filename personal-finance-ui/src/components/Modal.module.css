@@ -1,0 +1,43 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  overflow-y: auto;
+}
+
+.center {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  text-align: center;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(107,114,128,0.5); /* gray-500 with opacity */
+}
+
+.panel {
+  position: relative;
+  transform: translateZ(0);
+  overflow: hidden;
+  border-radius: 0.5rem;
+  background: #ffffff;
+  box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 36rem;
+}
+
+.content {
+  background: #ffffff;
+  padding: 1.5rem;
+}
+
+.headerRow { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem; }
+
+.title { font-size:1.125rem; font-weight:600; color:#111827; }
+
+.closeBtn { border-radius:0.375rem; background:#ffffff; color:#9ca3af; }

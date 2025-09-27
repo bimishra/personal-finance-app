@@ -1,0 +1,11 @@
+.container { position: relative; display: inline-flex; align-items: center; }
+.button { padding: 0.5rem; border-radius: 0.375rem; transition: background-color 150ms, color 150ms; }
+.default { color: #4b5563; }
+.default:hover { color: #4f46e5; background: #eef2ff; }
+.danger { color: #4b5563; }
+.danger:hover { color: #dc2626; background: #fff1f2; }
+.disabled { color: #9ca3af; background: #f9fafb; cursor: not-allowed; }
+
+.tooltip { position:absolute; bottom:100%; left:50%; transform:translateX(-50%); margin-bottom:0.5rem; padding:0.375rem 0.75rem; font-size:0.75rem; background:#111827; color:#fff; border-radius:0.375rem; opacity:0; visibility:hidden; transition:opacity 150ms; white-space:nowrap; box-shadow:0 6px 18px rgba(15,23,42,0.06); pointer-events:none; }
+.tooltipVisible { opacity:1; visibility:visible; }
+.tooltipArrow { position:absolute; bottom:0; left:50%; transform:translateX(-50%) translateY(50%) rotate(45deg); width:0.5rem; height:0.5rem; background:#111827; }

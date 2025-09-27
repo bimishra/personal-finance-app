@@ -6,6 +6,7 @@ import { AccountForm } from '@/features/accounts/AccountForm';
 import { AccountList } from '@/features/accounts/AccountList';
 import { useAccountForm } from '@/features/accounts/useAccountForm';
 import SearchInput from '@/components/SearchInput';
+import styles from './Accounts.module.css';
 
 export default function Accounts() {
   const dispatch = useAppDispatch();
@@ -28,20 +29,20 @@ export default function Accounts() {
   const filtered = accounts.filter(a => a.name.toLowerCase().includes(query.toLowerCase()));
 
   return (
-    <div className="container mx-auto px-4">
-      <div className="mb-6 space-y-4">
-        <div className="flex items-center justify-between">
+    <div className={styles.container}>
+      <div className={styles.spacer}>
+        <div className={styles.headerRow}>
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Accounts</h1>
-            <p className="mt-1 text-sm text-gray-600">Overview of your accounts — balances, type and recent activity.</p>
+            <h1 className={styles.title}>Accounts</h1>
+            <p className={styles.subtitle}>Overview of your accounts — balances, type and recent activity.</p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className={styles.headerRight}>
             <SearchInput value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search accounts" ariaLabel="Search accounts" onClear={() => setQuery('')} />
 
             <button
               onClick={() => setIsModalOpen(true)}
-              className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+              className={styles.newBtn}
             >
               <svg className="w-4 h-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />

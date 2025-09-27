@@ -1,6 +1,7 @@
 import React from 'react';
 import { Transaction } from '@/types';
 import { formatCurrency } from '@/utils/currency';
+import styles from './RecentTransactions.module.css';
 
 interface RecentTransactionsProps {
   transactions: Transaction[];
@@ -12,18 +13,14 @@ export const RecentTransactions: React.FC<RecentTransactionsProps> = ({
   getCurrency,
 }) => {
   return (
-    <ul className="divide-y">
+    <ul className={styles.list + ' ' + styles.divider}>
       {transactions.map((t) => (
-        <li key={t.id} className="py-3 flex justify-between">
-          <div>
-            <div className="font-medium">{t.description || '—'}</div>
-            <div className="text-sm text-gray-500">{t.txnDate}</div>
+        <li key={t.id} className={styles.item}>
+          <div className={styles.left}>
+            <div className={styles.title}>{t.description || '\u2014'}</div>
+            <div className={styles.date}>{t.txnDate}</div>
           </div>
-          <div
-            className={`font-semibold ${
-              t.type === 'CREDIT' ? 'text-green-600' : 'text-red-600'
-            }`}
-          >
+          <div className={`${styles.amount} ${t.type === 'CREDIT' ? styles.credit : styles.debit}`}>
             {t.type === 'CREDIT' ? '+' : '-'}
             {formatCurrency(t.amount, getCurrency(t.accountId) || 'USD')}
           </div>
