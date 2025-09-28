@@ -99,37 +99,46 @@ export const AccountActions: React.FC<AccountActionsProps> = ({
       <Modal
         open={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        title="Edit Account Name"
+        title="Edit Account"
       >
-        <div className={styles.modalBody}>
-          <div className="mb-4">
-            <label htmlFor="accountName" className={styles.label}>
+        <form
+          onSubmit={(e) => { e.preventDefault(); handleUpdateName(); }}
+          className="flex flex-col gap-5 w-full max-w-lg text-left"
+          aria-describedby="edit-account-form-help"
+        >
+          <div className="flex flex-col gap-1">
+            <label htmlFor="edit-account-name" className="text-[11px] font-medium tracking-wide text-gray-600 uppercase">
               Account Name
             </label>
             <input
+              id="edit-account-name"
               type="text"
-              id="accountName"
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
-              className={styles.input}
-              placeholder="Enter account name"
+              required
+              className="rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm transition outline-none placeholder:text-gray-400"
+              placeholder="e.g. Main Checking"
+              autoFocus
             />
+            <p id="edit-account-form-help" className="text-[11px] text-gray-500">Update the display name for this account.</p>
           </div>
-          <div className={styles.btnRow}>
+
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-1">
             <button
+              type="button"
               onClick={() => setIsEditModalOpen(false)}
-              className={`${styles.btn} ${styles.btnCancel}`}
+              className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition"
             >
               Cancel
             </button>
             <button
-              onClick={handleUpdateName}
-              className={`${styles.btn} ${styles.btnPrimary}`}
+              type="submit"
+              className="inline-flex items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
               Save Changes
             </button>
           </div>
-        </div>
+        </form>
       </Modal>
 
       <DeleteConfirmationModal

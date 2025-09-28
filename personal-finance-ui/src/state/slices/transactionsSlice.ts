@@ -22,9 +22,7 @@ export const fetchTransactions = createAsyncThunk(
     const page = params?.page ?? state.transactions.page ?? 0;
     const size = params?.size ?? state.transactions.size ?? 10;
     const query = { ...params, page, size };
-    // The backend likely returns a Spring Data Page object whose JSON has a 'number' field
-    // for the current page index (zero-based) rather than 'page'. We normalize here so the
-    // rest of the UI can rely on a stable TransactionPage shape.
+    
     const resp = await api.get<any>('/transactions', { params: query });
     const data = resp.data;
     const normalized: TransactionPage = {

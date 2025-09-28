@@ -8,6 +8,7 @@ import TransactionForm from './TransactionForm'
 import { IconButton } from '@/components/common'
 import { Icons } from '@/components/Icons'
 import { useCurrency } from '@/context/CurrencyContext'
+import { DeleteConfirmationModal } from '@/components/DeleteConfirmationModal'
 import styles from './TransactionTable.module.css'
 
 interface Props {
@@ -23,6 +24,8 @@ export default function TransactionTable({ transactions, onEdit, onDelete }: Pro
   const [selectedAccount, setSelectedAccount] = useState<string>('ALL')
   const [editingTxn, setEditingTxn] = useState<Transaction | null>(null)
   const [selectedTxns, setSelectedTxns] = useState<Set<string>>(new Set())
+  const [pendingDeleteTxn, setPendingDeleteTxn] = useState<Transaction | null>(null)
+  const [confirmBulkDelete, setConfirmBulkDelete] = useState(false)
 
   const filteredTxns =
     selectedAccount === 'ALL'
@@ -38,24 +41,32 @@ export default function TransactionTable({ transactions, onEdit, onDelete }: Pro
     })
   }
   
- const handleDelete = async (id: string) => {
+  const performSingleDelete = async (txn: Transaction) => {
     try {
-      await dispatch(deleteTransaction(id)).unwrap()
-      toast.success('Transaction deleted successfully')
+      if (onDelete) {
+        await onDelete(txn)
+      } else {
+        await dispatch(deleteTransaction(txn.id)).unwrap()
+        toast.success('Transaction deleted successfully')
+      }
       setSelectedTxns(prev => {
-        const newSet = new Set(prev)
-        newSet.delete(id)
-        return newSet
+        const next = new Set(prev)
+        next.delete(txn.id)
+        return next
       })
     } catch (err: any) {
-      toast.error(`Failed to delete transaction: ${err.message || err}`)
+      if (!onDelete) {
+        toast.error(`Failed to delete transaction: ${err?.message || err}`)
+      }
+      throw err
+    } finally {
+      setPendingDeleteTxn(null)
     }
   }
 
-  const handleBulkDelete = async () => {
-    if (!selectedTxns.size) return
-    if (!confirm(`Delete ${selectedTxns.size} selected transactions?`)) return
+  const performBulkDelete = async () => {
     const ids = Array.from(selectedTxns)
+    if (!ids.length) return
     try {
       for (const id of ids) {
         await dispatch(deleteTransaction(id)).unwrap()
@@ -63,7 +74,9 @@ export default function TransactionTable({ transactions, onEdit, onDelete }: Pro
       toast.success(`${ids.length} transactions deleted successfully`)
       setSelectedTxns(new Set())
     } catch (err: any) {
-      toast.error(`Failed to delete some transactions: ${err.message || err}`)
+      toast.error(`Failed to delete some transactions: ${err?.message || err}`)
+    } finally {
+      setConfirmBulkDelete(false)
     }
   }
 
@@ -102,7 +115,7 @@ export default function TransactionTable({ transactions, onEdit, onDelete }: Pro
         <div className={styles.filterRight}>
           <button
             className={styles.bulkDeleteBtn}
-            onClick={handleBulkDelete}
+            onClick={() => selectedTxns.size && setConfirmBulkDelete(true)}
             disabled={selectedTxns.size === 0}
           >
             <svg className="w-4 h-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
@@ -164,7 +177,7 @@ export default function TransactionTable({ transactions, onEdit, onDelete }: Pro
                       tooltip="Edit this transaction"
                     />
                     <IconButton
-                      onClick={() => handleDelete(t.id)}
+                      onClick={() => setPendingDeleteTxn(t)}
                       label="Delete Transaction"
                       icon={<Icons.Delete className="w-4 h-4" />}
                       variant="danger"
@@ -190,6 +203,28 @@ export default function TransactionTable({ transactions, onEdit, onDelete }: Pro
           initialValues={editingTxn}
           onSubmit={handleEditSave}
           onClose={() => setEditingTxn(null)}
+        />
+      )}
+
+      {/* Single Delete Confirmation */}
+      {pendingDeleteTxn && (
+        <DeleteConfirmationModal
+          open={!!pendingDeleteTxn}
+            onClose={() => setPendingDeleteTxn(null)}
+            onConfirm={() => performSingleDelete(pendingDeleteTxn)}
+            title="Delete Transaction"
+            message={`Are you sure you want to delete this transaction:\n${pendingDeleteTxn.description || formatAmount(pendingDeleteTxn.amount)}? This action cannot be undone.`}
+        />
+      )}
+
+      {/* Bulk Delete Confirmation */}
+      {confirmBulkDelete && (
+        <DeleteConfirmationModal
+          open={confirmBulkDelete}
+          onClose={() => setConfirmBulkDelete(false)}
+          onConfirm={performBulkDelete}
+          title="Delete Transactions"
+          message={`Delete ${selectedTxns.size} selected transaction${selectedTxns.size === 1 ? '' : 's'}? This action cannot be undone.`}
         />
       )}
     </div>

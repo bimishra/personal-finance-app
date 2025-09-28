@@ -19,5 +19,11 @@ export default tseslint.config([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    plugins: {
+      'page-duplicates': await import('./eslint-rules/no-duplicate-page-roots.js')
+    },
+    rules: {
+      'page-duplicates/no-duplicate-page-roots': 'error'
+    }
   },
 ])

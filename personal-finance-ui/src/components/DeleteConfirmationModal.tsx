@@ -1,6 +1,5 @@
 import React from 'react';
 import { Modal } from '@/components/common';
-import styles from './DeleteConfirmationModal.module.css';
 
 interface DeleteConfirmationModalProps {
   open: boolean;
@@ -23,11 +22,11 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
 }) => {
   return (
     <Modal open={open} onClose={onClose} title={title}>
-      <div className={styles.root}>
-        <div className={styles.row}>
-          <div className={styles.iconWrap}>
+      <div className="p-6 max-w-xl">
+        <div className="flex items-start gap-4">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-red-50">
             <svg
-              className={styles.icon}
+              className="h-6 w-6 text-red-600"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -41,15 +40,15 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
               />
             </svg>
           </div>
-          <div className={styles.body}>
-            <div className={styles.message}>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">
               {message}
-            </div>
+            </p>
             {hasTransactions && (
-              <div className={styles.warnBox}>
-                <div className={styles.warnRow}>
+              <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-4 shadow-sm">
+                <div className="flex items-start gap-2">
                   <svg
-                    className={styles.warnIcon}
+                    className="h-5 w-5 text-amber-400 mt-[2px]"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
                     fill="currentColor"
@@ -60,34 +59,36 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
                       clipRule="evenodd"
                     />
                   </svg>
-                  <p className={styles.warnText}>
+                  <p className="text-sm font-medium text-amber-800">
                     This item cannot be deleted because it has associated transactions.
                   </p>
                 </div>
+                {onExport && (
+                  <div className="mt-3">
+                    <button
+                      type="button"
+                      onClick={onExport}
+                      className="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition"
+                    >
+                      Export Transactions
+                    </button>
+                  </div>
+                )}
               </div>
             )}
-            <div className={styles.actions}>
-              {hasTransactions && onExport && (
-                <button
-                  type="button"
-                  onClick={onExport}
-                  className={`${styles.btn} ${styles.export}`}
-                >
-                  Export Transactions
-                </button>
-              )}
+            <div className="mt-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
               <button
                 type="button"
-                className={styles.btn}
                 onClick={onClose}
+                className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition"
               >
                 Cancel
               </button>
               <button
                 type="button"
-                className={`${styles.btn} ${styles.btnPrimary}`}
                 onClick={onConfirm}
                 disabled={hasTransactions}
+                className="inline-flex items-center justify-center rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Delete
               </button>

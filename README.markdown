@@ -190,3 +190,66 @@ Frontend Hot Reload:
 ## 📝 License
 
 See the [LICENSE](./LICENSE) file for details.
+
+---
+
+## 📄 Frontend Page Structure Conventions
+
+To avoid divergent duplicate implementations (a prior source of bugs), the frontend enforces a **single canonical page component** per route.
+
+### Pattern
+
+```
+src/pages/
+  RouteName/            # Folder containing the real implementation
+    RouteName.tsx       # Canonical component (logic, state, UI)
+    RouteName.module.css
+  RouteName.tsx         # Root alias re-export ONLY (no other code)
+```
+
+Example (Transactions):
+
+```
+src/pages/Transactions/Transactions.tsx   # Canonical
+src/pages/Transactions.tsx                # export { default } from './Transactions/Transactions'
+```
+
+### Rules
+
+1. If a nested folder `RouteName/RouteName.tsx` exists, the root `RouteName.tsx` MUST be an alias-only file:
+   ```ts
+   export { default } from "./RouteName/RouteName";
+   ```
+2. No additional code, hooks, or JSX in alias files.
+3. Do not create both full implementations (root + nested) — pick ONE canonical location.
+4. Prefer the nested form for any page that has >1 supporting file (styles, subcomponents, hooks).
+
+### ESLint Enforcement
+
+Custom rule: `page-duplicates/no-duplicate-page-roots` (see `personal-finance-ui/eslint-rules/no-duplicate-page-roots.js`).
+
+It will error if:
+
+- Both `pages/Foo.tsx` and `pages/Foo/Foo.tsx` exist and root is not a pure alias.
+- A root file contains extra statements beyond the single re-export.
+
+### Rationale
+
+- Prevents silent drift (one version updated, another still routed).
+- Simplifies imports — always import `@/pages/Foo` (bundler resolves root alias).
+- Supports future code-splitting: alias stays stable while nested folder grows.
+
+### Adding a New Page
+
+1. If it’s simple (one file), you may start with `pages/NewPage.tsx`.
+2. If it grows, move it into `pages/NewPage/NewPage.tsx` and replace root with alias.
+3. Run `npm run lint` to ensure no duplicate rule violations.
+
+### Migration Guide (Legacy Duplicates)
+
+1. Pick the richer implementation as canonical (usually the nested one).
+2. Replace root content with alias re-export.
+3. Delete any obsolete helper duplicates.
+4. Update README if the page has special notes.
+
+---
