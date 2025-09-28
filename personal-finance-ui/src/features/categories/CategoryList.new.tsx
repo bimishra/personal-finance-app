@@ -1,23 +1,6 @@
-import React from 'react';
-import { CategoryListItem, CategoryFormData } from './types';
-import { CategoryActions } from './CategoryActions';
-
-interface CategoryListProps {
-  categories: CategoryListItem[];
-  onDelete?: (category: CategoryListItem) => Promise<void>;
-  onUpdate?: (category: CategoryListItem, formData: CategoryFormData) => Promise<void>;
-}
-
-export const CategoryList: React.FC<CategoryListProps> = ({ 
-  categories,
-  onDelete,
-  onUpdate 
-}) => {
-  const getCategoryTypeColor = (type: 'INCOME' | 'EXPENSE') => {
-    return type === 'INCOME' 
-      ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/10' 
-      : 'bg-rose-50 text-rose-700 ring-1 ring-rose-600/10';
-  };
+// Deprecated prototype CategoryList (was Tailwind-heavy).
+// Neutralized placeholder; not used anywhere. Safe to delete.
+export {}; 
 
   const getBadgeIcon = (type: 'INCOME' | 'EXPENSE') => {
     return type === 'INCOME' ? (

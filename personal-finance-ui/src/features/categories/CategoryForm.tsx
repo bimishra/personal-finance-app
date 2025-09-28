@@ -3,7 +3,7 @@ import { useAppDispatch } from '@/state/hooks';
 import toast from 'react-hot-toast';
 import { Category } from '@/types';
 import { CategoryFormData } from './types';
-import Modal from '@/components/Modal';
+import { Modal } from '@/components/common';
 import styles from './CategoryForm.module.css';
 import layout from '@/styles/layout.module.css';
 

@@ -1,0 +1,15 @@
+/* AccountForm.module.css */
+.root { display:flex; flex-direction:column; }
+.root > * + * { margin-top:1rem; }
+
+.field { display:flex; flex-direction:column; }
+.label { font-size:0.75rem; font-weight:500; color:var(--color-text-secondary); text-transform:uppercase; letter-spacing:0.05em; }
+.input, .select { margin-top:0.25rem; padding:0.5rem 0.75rem; border:1px solid var(--color-border-subtle); border-radius:var(--radius-md); font-size:0.875rem; background:#fff; transition:var(--transition-base); }
+.input:focus, .select:focus { outline:2px solid var(--color-primary); outline-offset:1px; }
+
+/* Currency input with prefix */
+.currencyWrapper { position:relative; }
+.currencyPrefix { position:absolute; inset-block:0; left:0; display:flex; align-items:center; padding-left:0.75rem; font-size:0.75rem; color:var(--color-muted); }
+.currencyInput { padding-left:1.75rem; }
+
+.actions { display:flex; justify-content:flex-end; gap:0.75rem; padding-top:0.5rem; }

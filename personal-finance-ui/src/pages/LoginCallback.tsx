@@ -78,7 +78,7 @@ export default function LoginCallback() {
           </>
         ) : (
           <>
-            <div className={styles.spinner} aria-hidden="true"></div>
+            <div className={`spinner ${styles.spinner}`} aria-hidden="true"></div>
             <h2 className={styles.title}>Completing sign in...</h2>
             <p className={styles.subtitle}>Please wait while we set up your account.</p>
           </>

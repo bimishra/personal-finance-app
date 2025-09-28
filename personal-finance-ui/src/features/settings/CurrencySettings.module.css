@@ -1,0 +1,14 @@
+/* CurrencySettings.module.css */
+.root { padding:1.5rem; }
+.sectionHead { margin-bottom:1.25rem; }
+.title { font-size:1.125rem; font-weight:600; color:var(--color-text-primary); }
+.desc { margin-top:0.25rem; font-size:0.875rem; color:var(--color-text-secondary); line-height:1.4; }
+
+.selectRow { display:flex; align-items:center; gap:1rem; }
+.selectWrap { flex-grow:1; }
+.select { width:100%; margin-top:0.25rem; padding:0.5rem 0.75rem; border:1px solid var(--color-border-subtle); border-radius:var(--radius-md); font-size:0.875rem; background:#fff; }
+.select:focus { outline:2px solid var(--color-primary); outline-offset:1px; }
+
+.info { margin-top:1rem; background:#eff6ff; padding:1rem; border-radius:var(--radius-md); display:flex; }
+.infoIcon { width:1.25rem; height:1.25rem; color:#60a5fa; margin-right:0.75rem; flex-shrink:0; }
+.infoText { font-size:0.8125rem; color:#1d4ed8; line-height:1.3; }

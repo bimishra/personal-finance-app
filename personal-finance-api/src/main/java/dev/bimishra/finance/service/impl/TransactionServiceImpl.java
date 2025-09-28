@@ -11,6 +11,8 @@ import dev.bimishra.finance.service.TransactionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -41,8 +43,20 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
+    public Page<TransactionDto> listByUser(UUID userId, Pageable pageable) {
+        Page<Transaction> page = repo.findByUserId(userId, pageable);
+        return page.map(mapper::toDto);
+    }
+
+    @Override
     public List<TransactionDto> listByUserBetween(UUID userId, LocalDate from, LocalDate to) {
         return repo.findByUserIdAndTxnDateBetween(userId, from, to).stream().map(mapper::toDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<TransactionDto> listByUserBetween(UUID userId, LocalDate from, LocalDate to, Pageable pageable) {
+        Page<Transaction> page = repo.findByUserIdAndTxnDateBetween(userId, from, to, pageable);
+        return page.map(mapper::toDto);
     }
 
     @Override

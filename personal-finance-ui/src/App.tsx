@@ -4,7 +4,7 @@ import { useUser } from './context/UserContext'
 import { UserProvider } from './context/UserContext'
 import { CurrencyProvider } from './context/CurrencyContext'
 import Navbar from './components/Navbar'
-import Sidebar from './components/Sidebar'
+import AuthenticatedLayout from './layouts/AuthenticatedLayout'
 import AuthGuard from './components/AuthGuard'
 import Dashboard from './pages/Dashboard'
 import Accounts from './pages/Accounts'
@@ -16,15 +16,7 @@ import Settings from './pages/Settings'
 import Login from './pages/Login'
 import LoginCallback from './pages/LoginCallback'
 
-// Layout component for authenticated pages
-const AuthenticatedLayout = () => (
-  <div className="w-full flex gap-6">
-    <Sidebar />
-    <main className="flex-1">
-      <Outlet />
-    </main>
-  </div>
-)
+// AuthenticatedLayout moved to src/layouts/AuthenticatedLayout.tsx
 
 // Root path handler component
 const RootRedirect = () => {

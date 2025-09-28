@@ -1,6 +1,8 @@
 package dev.bimishra.finance.repository;
 
 import dev.bimishra.finance.entity.Transaction;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,6 +15,10 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
     List<Transaction> findByUserIdAndTxnDateBetween(UUID userId, LocalDate from, LocalDate to);
     List<Transaction> findByUserId(UUID userId);
     List<Transaction> findByAccountId(UUID accountId);
+
+    // Pageable variants
+    Page<Transaction> findByUserId(UUID userId, Pageable pageable);
+    Page<Transaction> findByUserIdAndTxnDateBetween(UUID userId, LocalDate from, LocalDate to, Pageable pageable);
 
     // Aggregates net amount per day (txn_date). Credits are positive, debits negative.
     @Query(value = "SELECT txn_date AS day, SUM(CASE WHEN type = 'CREDIT' THEN amount ELSE -amount END) AS total " +

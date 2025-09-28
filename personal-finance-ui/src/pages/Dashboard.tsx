@@ -3,16 +3,14 @@ import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { fetchAccounts } from '../state/slices/countSlice';
 import { fetchTransactions } from '../state/slices/transactionsSlice';
-import Card from '../components/Card';
+import { Card } from '@/components/common';
 import dayjs from 'dayjs';
 import { formatCurrency } from '@/utils/currency';
-import { TransactionsChart, calculateTransactionTotals } from '@/features/dashboard/TransactionsChart';
-import { RecentTransactions } from '@/features/dashboard/RecentTransactions';
-import { AccountsSummary } from '@/features/dashboard/AccountsSummary';
+import { TransactionsChart, calculateTransactionTotals, RecentTransactions, AccountsSummary } from '@/features/dashboard/components';
 import type { Account, Transaction } from '@/types';
-import Modal from '@/components/Modal';
+import { Modal } from '@/components/common';
 import { AccountForm } from '@/features/accounts/AccountForm';
-import { useAccountForm } from '@/features/accounts/useAccountForm';
+import { useAccountForm } from '@/hooks/useAccountForm';
 import styles from './Dashboard.module.css';
 
 
@@ -227,7 +225,7 @@ export default function Dashboard() {
               <div className="pt-2">
                 <button
                   onClick={() => setIsAccountModalOpen(true)}
-                  className={styles.accountsCardBtn}
+                  className="btn btnPrimary"
                 >
                   New account
                 </button>

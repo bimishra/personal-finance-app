@@ -15,8 +15,8 @@ export default function Settings() {
         </div>
 
         <div className={styles.headerActions}>
-          <button className={`${styles.btn} ${styles.btnNeutral}`}>Reset to defaults</button>
-          <button className={`${styles.btn} ${styles.btnPrimary}`}>Save changes</button>
+          <button className="btn btnNeutral">Reset to defaults</button>
+          <button className="btn btnPrimary">Save changes</button>
         </div>
       </div>
 

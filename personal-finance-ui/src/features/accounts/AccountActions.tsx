@@ -2,10 +2,10 @@ import React, { useState, useCallback } from 'react';
 import { useAppDispatch } from '@/state/hooks';
 import { Account } from './types';
 import { DeleteConfirmationModal } from '@/components/DeleteConfirmationModal';
-import Modal from '@/components/Modal';
+import { Modal } from '@/components/common';
 import toast from 'react-hot-toast';
 import { updateAccount, deleteAccount } from '@/state/slices/countSlice';
-import { IconButton } from '@/components/IconButton';
+import { IconButton } from '@/components/common';
 import { Icons } from '@/components/Icons';
 import styles from './AccountActions.module.css';
 

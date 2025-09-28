@@ -61,7 +61,7 @@ export default function Login() {
             <h1 className={styles.title}>Welcome to Personal Finance</h1>
             <p className={styles.subtitle}>Manage your finances with ease</p>
           </div>
-          <button onClick={handleLoginClick} className={styles.primaryBtn}>
+          <button onClick={handleLoginClick} className="btn btnPrimary" style={{ width: '100%' }}>
             Sign in to continue
           </button>
         </div>

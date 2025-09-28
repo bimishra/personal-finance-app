@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import { useAppDispatch } from '@/state/hooks';
 import { DeleteConfirmationModal } from '@/components/DeleteConfirmationModal';
-import Modal from '@/components/Modal';
-import { IconButton } from '@/components/IconButton';
+import { Modal } from '@/components/common';
+import { IconButton } from '@/components/common';
 import { Icons } from '@/components/Icons';
 import toast from 'react-hot-toast';
 import { CategoryActionsProps } from './types';
@@ -39,7 +39,7 @@ export const CategoryActions: React.FC<CategoryActionsProps> = ({
           label="Edit Category"
           icon={<Icons.Edit />}
           tooltip="Edit this category"
-          className="hover:bg-blue-50"
+          className={listStyles.iconHoverBlue}
         />
         <IconButton
           onClick={() => setIsDeleteModalOpen(true)}
@@ -52,7 +52,7 @@ export const CategoryActions: React.FC<CategoryActionsProps> = ({
               ? "Can't delete category with transactions. Remove or reassign transactions first."
               : "Delete this category"
           }
-          className="hover:bg-red-50"
+          className={listStyles.iconHoverRed}
         />
       </div>
 

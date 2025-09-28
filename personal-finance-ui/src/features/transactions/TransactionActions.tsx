@@ -2,9 +2,10 @@ import React, { useState, useCallback } from 'react';
 import { useAppDispatch } from '@/state/hooks';
 import { Transaction } from '@/types';
 import { DeleteConfirmationModal } from '@/components/DeleteConfirmationModal';
-import Modal from '@/components/Modal';
-import { IconButton } from '@/components/IconButton';
+import { Modal } from '@/components/common';
+import { IconButton } from '@/components/common';
 import { Icons } from '@/components/Icons';
+import styles from './TransactionActions.module.css';
 import toast from 'react-hot-toast';
 
 interface TransactionActionsProps {
@@ -36,13 +37,13 @@ export const TransactionActions: React.FC<TransactionActionsProps> = ({
 
   return (
     <>
-      <div className="flex items-center justify-center space-x-1">
+      <div className={styles.actions}>
         <IconButton
           onClick={() => setIsEditModalOpen(true)}
           label="Edit Transaction"
           icon={<Icons.Edit />}
           tooltip="Edit this transaction"
-          className="hover:bg-blue-50"
+          className={styles.hoverBlue}
         />
         <IconButton
           onClick={() => setIsDeleteModalOpen(true)}
@@ -50,7 +51,7 @@ export const TransactionActions: React.FC<TransactionActionsProps> = ({
           icon={<Icons.Delete />}
           variant="danger"
           tooltip="Delete this transaction"
-          className="hover:bg-red-50"
+          className={styles.hoverRed}
         />
       </div>
 

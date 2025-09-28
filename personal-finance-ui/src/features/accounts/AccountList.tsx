@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Account } from './types';
 import { formatCurrency } from '@/utils/currency';
-import Card from '@/components/Card';
+import { Card } from '@/components/common';
 import { AccountActions } from './AccountActions';
 import styles from './AccountList.module.css';
 

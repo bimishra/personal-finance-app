@@ -1,6 +1,8 @@
 package dev.bimishra.finance.service;
 
 import dev.bimishra.finance.dto.TransactionDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,4 +23,8 @@ public interface TransactionService {
 
     // Returns two ordered maps keyed by LocalDate: "income" -> daily income, "expense" -> daily expense
     Map<String, Map<LocalDate, BigDecimal>> getDailyIncomeExpense(UUID userId, LocalDate from, LocalDate to);
+
+    // Pageable variants for listing to support large datasets and client-side pagination
+    Page<TransactionDto> listByUser(UUID userId, Pageable pageable);
+    Page<TransactionDto> listByUserBetween(UUID userId, LocalDate from, LocalDate to, Pageable pageable);
 }

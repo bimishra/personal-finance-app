@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { CategoryListItem, CategoryFormData } from './types';
 import { CategoryActions } from './CategoryActions';
 import styles from './CategoryList.module.css';
@@ -15,6 +15,32 @@ export const CategoryList: React.FC<CategoryListProps> = ({
   onDelete,
   onUpdate 
 }) => {
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const total = categories.length;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  // Clamp current page if data shrinks
+  if (page > totalPages) {
+    setPage(totalPages);
+  }
+
+  const paged = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return categories.slice(start, start + pageSize);
+  }, [categories, page, pageSize]);
+
+  const goToPage = (p: number) => {
+    if (p < 1 || p > totalPages) return;
+    setPage(p);
+  };
+
+  const handlePageSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newSize = Number(e.target.value) || 10;
+    setPageSize(newSize);
+    setPage(1); // reset to first page when page size changes
+  };
   if (categories.length === 0) {
     return (
       <div className={styles.emptyContainer}>
@@ -35,10 +61,10 @@ export const CategoryList: React.FC<CategoryListProps> = ({
   }
 
   return (
-    <div className="space-y-4">
+    <div className={styles.stackMd}>
       <div className={styles.card}>
         <div className={styles.divide}>
-          {categories.map((category) => (
+          {paged.map((category) => (
             <div key={category.id} className={`${styles.row} ${styles.rowHover}`}>
               <div className={styles.left}>
                 <div className={`${styles.avatar} ${category.type === 'INCOME' ? styles.avatarIncome : styles.avatarExpense}`}>
@@ -79,6 +105,71 @@ export const CategoryList: React.FC<CategoryListProps> = ({
               </div>
             </div>
           ))}
+        </div>
+      </div>
+      <div className={styles.paginationBar} aria-label="Pagination navigation">
+        <div className={styles.paginationMeta}>
+          Showing {paged.length === 0 ? 0 : (page - 1) * pageSize + 1}
+          –{(page - 1) * pageSize + paged.length} of {total} categories
+        </div>
+        <div className={styles.paginationControls}>
+          <button
+            type="button"
+            className={`${styles.pageBtn} ${page === 1 ? styles.pageBtnDisabled : ''}`}
+            onClick={() => goToPage(page - 1)}
+            disabled={page === 1}
+            aria-label="Previous page"
+          >
+            ‹
+          </button>
+          {[...Array(totalPages)].slice(0, 5).map((_, idx) => {
+            // Basic window: first 5 pages or fewer. Could be enhanced later.
+            const p = idx + 1;
+            return (
+              <button
+                key={p}
+                type="button"
+                onClick={() => goToPage(p)}
+                className={`${styles.pageBtn} ${p === page ? styles.pageBtnActive : ''}`}
+                aria-current={p === page ? 'page' : undefined}
+                aria-label={`Page ${p}`}
+              >
+                {p}
+              </button>
+            );
+          })}
+          {totalPages > 5 && page < totalPages && (
+            <>
+              <span style={{ fontSize: '0.75rem', padding: '0 0.25rem' }}>…</span>
+              <button
+                type="button"
+                className={`${styles.pageBtn} ${page === totalPages ? styles.pageBtnActive : ''}`}
+                onClick={() => goToPage(totalPages)}
+                aria-label={`Page ${totalPages}`}
+              >
+                {totalPages}
+              </button>
+            </>
+          )}
+          <button
+            type="button"
+            className={`${styles.pageBtn} ${page === totalPages ? styles.pageBtnDisabled : ''}`}
+            onClick={() => goToPage(page + 1)}
+            disabled={page === totalPages}
+            aria-label="Next page"
+          >
+            ›
+          </button>
+          <select
+            value={pageSize}
+            onChange={handlePageSizeChange}
+            className={styles.pageSizeSelect}
+            aria-label="Items per page"
+          >
+            {[10, 25, 50, 100].map(size => (
+              <option key={size} value={size}>{size}/page</option>
+            ))}
+          </select>
         </div>
       </div>
     </div>

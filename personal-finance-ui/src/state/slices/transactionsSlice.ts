@@ -2,11 +2,40 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import api from '../../services/api'
 import { Transaction } from '../../types'
 
+// Normalized shape we keep in the Redux store
+interface TransactionPage {
+  content: Transaction[];
+  page: number;            // zero-based page index
+  size: number;            // requested page size (may differ from content length on last page)
+  totalElements: number;
+  totalPages: number;
+  last: boolean;
+}
+
 export const fetchTransactions = createAsyncThunk(
   'transactions/fetch',
-  async (params?: { from?: string; to?: string }) => {
-    const resp = await api.get<Transaction[]>('/transactions', { params })
-    return resp.data
+  async (
+    params: { page?: number; size?: number; from?: string; to?: string } | undefined,
+    thunkApi
+  ) => {
+    const state = thunkApi.getState() as { transactions: TransactionsState };
+    const page = params?.page ?? state.transactions.page ?? 0;
+    const size = params?.size ?? state.transactions.size ?? 10;
+    const query = { ...params, page, size };
+    // The backend likely returns a Spring Data Page object whose JSON has a 'number' field
+    // for the current page index (zero-based) rather than 'page'. We normalize here so the
+    // rest of the UI can rely on a stable TransactionPage shape.
+    const resp = await api.get<any>('/transactions', { params: query });
+    const data = resp.data;
+    const normalized: TransactionPage = {
+      content: data.content ?? [],
+      page: (data.page ?? data.number) ?? 0,
+      size: data.size ?? query.size ?? 10,
+      totalElements: data.totalElements ?? data.total ?? 0,
+      totalPages: data.totalPages ?? data.totalPage ?? 0,
+      last: data.last ?? false
+    };
+    return normalized;
   }
 )
 
@@ -36,9 +65,29 @@ export const updateTransaction = createAsyncThunk(
 
 type Status = 'idle' | 'loading' | 'succeeded' | 'failed'
 
+interface TransactionsState {
+  items: Transaction[];
+  status: Status;
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  last: boolean;
+}
+
+const initialState: TransactionsState = {
+  items: [],
+  status: 'idle',
+  page: 0,
+  size: 10,
+  totalElements: 0,
+  totalPages: 0,
+  last: true
+}
+
 const transactionsSlice = createSlice({
   name: 'transactions',
-  initialState: { items: [] as Transaction[], status: 'idle' as Status },
+  initialState,
   reducers: {},
   extraReducers: builder => {
     builder
@@ -47,13 +96,32 @@ const transactionsSlice = createSlice({
       })
       .addCase(fetchTransactions.fulfilled, (state, action) => {
         state.status = 'succeeded'
-        state.items = action.payload
+        state.items = action.payload.content
+        state.page = action.payload.page
+        state.size = action.payload.size
+        state.totalElements = action.payload.totalElements
+        // Fallback: if API sends 0 totalPages but elements exceed a single page, compute.
+        const computedTotalPages = state.size > 0 ? Math.max(1, Math.ceil(state.totalElements / state.size)) : 1
+        state.totalPages = action.payload.totalPages && action.payload.totalPages > 0
+          ? action.payload.totalPages
+          : computedTotalPages
+        state.last = action.payload.last ?? (state.page >= state.totalPages - 1)
       })
       .addCase(createTransaction.fulfilled, (state, action) => {
         state.items.unshift(action.payload)
+        state.totalElements += 1
+        // Recompute pagination metadata (optimistic) so navigation stays accurate
+        state.totalPages = Math.max(1, Math.ceil(state.totalElements / state.size))
+        state.last = state.page >= state.totalPages - 1
       })
       .addCase(deleteTransaction.fulfilled, (state, action) => {
         state.items = state.items.filter(t => t.id !== action.payload)
+        state.totalElements = Math.max(0, state.totalElements - 1)
+        state.totalPages = state.totalElements === 0 ? 0 : Math.max(1, Math.ceil(state.totalElements / state.size))
+        if (state.page >= state.totalPages) {
+          state.page = Math.max(0, state.totalPages - 1)
+        }
+        state.last = state.page >= (state.totalPages === 0 ? 0 : state.totalPages - 1)
       })
       .addCase(updateTransaction.fulfilled, (state, action) => {
         const idx = state.items.findIndex(t => t.id === action.payload.id)

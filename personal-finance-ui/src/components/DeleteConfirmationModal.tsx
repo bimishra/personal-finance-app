@@ -1,5 +1,6 @@
 import React from 'react';
-import Modal from '@/components/Modal';
+import { Modal } from '@/components/common';
+import styles from './DeleteConfirmationModal.module.css';
 
 interface DeleteConfirmationModalProps {
   open: boolean;
@@ -22,11 +23,11 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
 }) => {
   return (
     <Modal open={open} onClose={onClose} title={title}>
-      <div className="p-6 max-w-lg mx-auto">
-        <div className="flex items-start space-x-4">
-          <div className="flex-shrink-0 bg-red-50 rounded-full p-2">
+      <div className={styles.root}>
+        <div className={styles.row}>
+          <div className={styles.iconWrap}>
             <svg
-              className="h-6 w-6 text-red-600"
+              className={styles.icon}
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -40,15 +41,15 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
               />
             </svg>
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-sm text-gray-700 whitespace-pre-wrap">
+          <div className={styles.body}>
+            <div className={styles.message}>
               {message}
             </div>
             {hasTransactions && (
-              <div className="mt-4 bg-yellow-50 border border-yellow-100 rounded-lg p-4 shadow-sm">
-                <div className="flex items-center">
+              <div className={styles.warnBox}>
+                <div className={styles.warnRow}>
                   <svg
-                    className="h-5 w-5 text-yellow-400 mr-2"
+                    className={styles.warnIcon}
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
                     fill="currentColor"
@@ -59,33 +60,32 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
                       clipRule="evenodd"
                     />
                   </svg>
-                  <p className="text-sm text-yellow-800 font-medium">
+                  <p className={styles.warnText}>
                     This item cannot be deleted because it has associated transactions.
                   </p>
                 </div>
               </div>
             )}
-
-            <div className="mt-6 flex items-center justify-end space-x-3">
+            <div className={styles.actions}>
               {hasTransactions && onExport && (
                 <button
                   type="button"
                   onClick={onExport}
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+                  className={`${styles.btn} ${styles.export}`}
                 >
                   Export Transactions
                 </button>
               )}
               <button
                 type="button"
-                className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+                className={styles.btn}
                 onClick={onClose}
               >
                 Cancel
               </button>
               <button
                 type="button"
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className={`${styles.btn} ${styles.btnPrimary}`}
                 onClick={onConfirm}
                 disabled={hasTransactions}
               >
