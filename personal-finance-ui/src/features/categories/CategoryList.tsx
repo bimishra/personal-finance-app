@@ -79,7 +79,7 @@ export const CategoryList: React.FC<CategoryListProps> = ({
                     </span>
                     {category.name}
                   </div>
-                  <div className={styles.desc}>{category.description || ''}</div>
+                  
                 </div>
               </div>
               <div className={styles.transactionsCol}>

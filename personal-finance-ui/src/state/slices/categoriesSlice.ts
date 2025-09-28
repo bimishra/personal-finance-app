@@ -4,7 +4,7 @@ import { Category } from '../../types'
 
 // Fetch all categories
 export const fetchCategories = createAsyncThunk('categories/fetchAll', async () => {
-  const res = await api.get<Category[]>('/categories')
+  const res = await api.get<Category[]>('/categories/counts')
   return res.data
 })
 

@@ -206,7 +206,7 @@ export default function Categories() {
               <p className={styles.panelDescription}>Create custom categories to better classify your transactions.</p>
               {userCategories.length > 0 ? (
                 <CategoryList
-                  categories={userCategories.map(c => ({ ...c, transactionCount: 0 }))}
+                  categories={userCategories}
                   onDelete={handleDeleteCategory}
                   onUpdate={handleUpdateCategory}
                 />
@@ -236,7 +236,7 @@ export default function Categories() {
               </header>
               <p className={styles.panelDescription}>Predefined categories you can immediately use. These cannot be edited or deleted.</p>
               <CategoryList
-                categories={defaultCategories.map(c => ({ ...c, transactionCount: 0 }))}
+                categories={defaultCategories}
               />
             </section>
           )

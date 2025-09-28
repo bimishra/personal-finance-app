@@ -23,8 +23,8 @@ export interface Category {
   userId: UUID
   name: string
   type: 'INCOME' | 'EXPENSE'
-  description?: string
   defaultCategory: boolean
+  transactionCount?: number
   createdAt?: string
   updatedAt?: string
 }
