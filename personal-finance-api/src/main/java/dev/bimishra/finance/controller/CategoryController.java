@@ -32,7 +32,7 @@ public class CategoryController {
         return ResponseEntity.ok(svc.findAllForUser());
     }
 
-    @GetMapping("{include=counts}")
+    @GetMapping("/counts")
     public ResponseEntity<List<CategoryWithCountDto>> listWithTransactionCounts() {
         return ResponseEntity.ok(svc.listWithTransactionCounts());
     }
