@@ -15,15 +15,19 @@ interface TransactionPage {
 export const fetchTransactions = createAsyncThunk(
   'transactions/fetch',
   async (
-    params: { page?: number; size?: number; from?: string; to?: string } | undefined,
+    params: { page?: number; size?: number; from?: string; to?: string; accountId?: string } | undefined,
     thunkApi
   ) => {
     const state = thunkApi.getState() as { transactions: TransactionsState };
     const page = params?.page ?? state.transactions.page ?? 0;
     const size = params?.size ?? state.transactions.size ?? 10;
+    const accountId = params?.accountId ?? state.transactions.accountId;
     const query = { ...params, page, size };
-    
-    const resp = await api.get<any>('/transactions', { params: query });
+    let url = '/transactions';
+    if (accountId && accountId !== 'ALL') {
+      url = `/transactions/account/${accountId}`; // account-specific endpoint per requirement
+    }
+    const resp = await api.get<any>(url, { params: query });
     const data = resp.data;
     const normalized: TransactionPage = {
       content: data.content ?? [],
@@ -33,7 +37,7 @@ export const fetchTransactions = createAsyncThunk(
       totalPages: data.totalPages ?? data.totalPage ?? 0,
       last: data.last ?? false
     };
-    return normalized;
+    return { ...normalized, accountId: accountId ?? null } as TransactionPage & { accountId: string | null };
   }
 )
 
@@ -71,6 +75,7 @@ interface TransactionsState {
   totalElements: number;
   totalPages: number;
   last: boolean;
+  accountId: string | null; // currently applied account filter
 }
 
 const initialState: TransactionsState = {
@@ -80,13 +85,18 @@ const initialState: TransactionsState = {
   size: 10,
   totalElements: 0,
   totalPages: 0,
-  last: true
+  last: true,
+  accountId: null
 }
 
 const transactionsSlice = createSlice({
   name: 'transactions',
   initialState,
-  reducers: {},
+  reducers: {
+    clearAccountFilter: (state) => {
+      state.accountId = null;
+    }
+  },
   extraReducers: builder => {
     builder
       .addCase(fetchTransactions.pending, state => {
@@ -104,6 +114,9 @@ const transactionsSlice = createSlice({
           ? action.payload.totalPages
           : computedTotalPages
         state.last = action.payload.last ?? (state.page >= state.totalPages - 1)
+        // Track current account filter
+        // @ts-ignore
+        state.accountId = action.payload.accountId ?? state.accountId ?? null
       })
       .addCase(createTransaction.fulfilled, (state, action) => {
         state.items.unshift(action.payload)
@@ -130,4 +143,5 @@ const transactionsSlice = createSlice({
   }
 })
 
+export const { clearAccountFilter } = transactionsSlice.actions;
 export default transactionsSlice.reducer

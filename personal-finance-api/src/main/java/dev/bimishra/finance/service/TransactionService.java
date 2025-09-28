@@ -27,4 +27,10 @@ public interface TransactionService {
     // Pageable variants for listing to support large datasets and client-side pagination
     Page<TransactionDto> listByUser(UUID userId, Pageable pageable);
     Page<TransactionDto> listByUserBetween(UUID userId, LocalDate from, LocalDate to, Pageable pageable);
+
+    // Account-scoped listing (must include userId to ensure the account belongs to user)
+    List<TransactionDto> listByAccount(UUID accountId, UUID userId);
+    List<TransactionDto> listByAccountBetween(UUID accountId, UUID userId, LocalDate from, LocalDate to);
+    Page<TransactionDto> listByAccount(UUID accountId, UUID userId, Pageable pageable);
+    Page<TransactionDto> listByAccountBetween(UUID accountId, UUID userId, LocalDate from, LocalDate to, Pageable pageable);
 }

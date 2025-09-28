@@ -1,5 +1,5 @@
 // src/features/transactions/TransactionTable.tsx
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Transaction } from '@/types'
 import { useAppSelector, useAppDispatch } from '@/state/hooks'
 import { deleteTransaction, updateTransaction } from '@/state/slices/transactionsSlice'
@@ -15,22 +15,28 @@ interface Props {
   transactions: Transaction[];
   onEdit?: (transaction: Transaction) => void;
   onDelete?: (transaction: Transaction) => Promise<void>;
+  onAccountFilterChange?: (accountId: string) => void;
+  currentAccountId?: string | null;
 }
 
-export default function TransactionTable({ transactions, onEdit, onDelete }: Props) {
+export default function TransactionTable({ transactions, onEdit, onDelete, onAccountFilterChange, currentAccountId }: Props) {
   const accounts = useAppSelector(s => s.accounts.items)
   const dispatch = useAppDispatch()
   const { formatAmount } = useCurrency();
-  const [selectedAccount, setSelectedAccount] = useState<string>('ALL')
+  const [selectedAccount, setSelectedAccount] = useState<string>(currentAccountId || 'ALL')
+  // Keep local select in sync if parent updates filter externally
+  useEffect(() => {
+    if ((currentAccountId || 'ALL') !== selectedAccount) {
+      setSelectedAccount(currentAccountId || 'ALL')
+    }
+  }, [currentAccountId])
   const [editingTxn, setEditingTxn] = useState<Transaction | null>(null)
   const [selectedTxns, setSelectedTxns] = useState<Set<string>>(new Set())
   const [pendingDeleteTxn, setPendingDeleteTxn] = useState<Transaction | null>(null)
   const [confirmBulkDelete, setConfirmBulkDelete] = useState(false)
 
-  const filteredTxns =
-    selectedAccount === 'ALL'
-      ? transactions
-      : transactions.filter(t => t.accountId === selectedAccount)
+  // Transactions now provided already filtered server-side when account selected.
+  const filteredTxns = transactions
 
   const toggleSelect = (id: string) => {
     setSelectedTxns(prev => {
@@ -100,7 +106,11 @@ export default function TransactionTable({ transactions, onEdit, onDelete }: Pro
             <select
               className={styles.select}
               value={selectedAccount}
-              onChange={e => setSelectedAccount(e.target.value)}
+              onChange={e => {
+                const val = e.target.value
+                setSelectedAccount(val)
+                onAccountFilterChange?.(val)
+              }}
             >
               <option value="ALL">All Accounts</option>
               {accounts.map(a => (

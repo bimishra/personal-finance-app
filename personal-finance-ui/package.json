@@ -20,7 +20,10 @@
         "react-hot-toast": "^2.6.0",
         "react-redux": "^8.1.1",
         "react-router-dom": "^6.14.1",
-        "recharts": "^2.6.2"
+        "recharts": "^2.6.2",
+        "@tanstack/react-query": "^5.56.0",
+        "@tanstack/react-query-devtools": "^5.56.0",
+        "fuse.js": "^7.0.0"
     },
     "devDependencies": {
         "@types/react": "^18.2.21",

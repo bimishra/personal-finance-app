@@ -5,6 +5,10 @@
   overflow-y: auto;
 }
 
+.backdropTop {
+  z-index: 60; /* higher layer for stacked modal */
+}
+
 .center {
   display: flex;
   min-height: 100vh;

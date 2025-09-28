@@ -31,6 +31,16 @@ public class TransactionController {
         this.svc = svc;
     }
 
+    private boolean isPaginationRequested(HttpServletRequest request) {
+        return request.getParameter("page") != null || request.getParameter("size") != null || request.getParameter("sort") != null;
+    }
+
+    private Pageable cappedPageable(Pageable pageable) {
+        int size = pageable.getPageSize() <= 0 ? 20 : pageable.getPageSize();
+        int cappedSize = Math.min(size, MAX_PAGE_SIZE);
+        return PageRequest.of(pageable.getPageNumber(), cappedSize, pageable.getSort());
+    }
+
     /**
      * List transactions for current user.
      * Backward-compatible behavior: if no pagination parameters (page/size/sort) are provided, this returns the full list as before.
@@ -45,13 +55,11 @@ public class TransactionController {
 
         UUID userId = SecurityUtils.getCurrentUserId();
 
-        boolean paginationRequested = request.getParameter("page") != null || request.getParameter("size") != null || request.getParameter("sort") != null;
+        boolean paginationRequested = isPaginationRequested(request);
 
         // Apply page size cap when pagination is requested
         if (paginationRequested) {
-            int size = pageable.getPageSize() <= 0 ? 20 : pageable.getPageSize();
-            int cappedSize = Math.min(size, MAX_PAGE_SIZE);
-            pageable = PageRequest.of(pageable.getPageNumber(), cappedSize, pageable.getSort());
+            pageable = cappedPageable(pageable);
         }
 
         // If a date range was provided
@@ -71,6 +79,38 @@ public class TransactionController {
             return ResponseEntity.ok(pagedResponse(page));
         } else {
             List<TransactionDto> results = svc.listByUser(userId);
+            return ResponseEntity.ok(results);
+        }
+    }
+
+    // New endpoint: list transactions by account (same pagination semantics)
+    @GetMapping("/account/{accountId}")
+    public ResponseEntity<?> listByAccount(@PathVariable UUID accountId,
+                                           @AuthenticationPrincipal UserPrincipal principal,
+                                           @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+                                           @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+                                           Pageable pageable,
+                                           HttpServletRequest request) {
+
+        UUID userId = SecurityUtils.getCurrentUserId();
+        boolean paginationRequested = isPaginationRequested(request);
+        if (paginationRequested) pageable = cappedPageable(pageable);
+
+        if (from != null && to != null) {
+            if (paginationRequested) {
+                Page<TransactionDto> page = svc.listByAccountBetween(accountId, userId, from, to, pageable);
+                return ResponseEntity.ok(pagedResponse(page));
+            } else {
+                List<TransactionDto> results = svc.listByAccountBetween(accountId, userId, from, to);
+                return ResponseEntity.ok(results);
+            }
+        }
+
+        if (paginationRequested) {
+            Page<TransactionDto> page = svc.listByAccount(accountId, userId, pageable);
+            return ResponseEntity.ok(pagedResponse(page));
+        } else {
+            List<TransactionDto> results = svc.listByAccount(accountId, userId);
             return ResponseEntity.ok(results);
         }
     }

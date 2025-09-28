@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
-import { fetchAccounts } from '@/state/slices/countSlice';
+import { useAccounts } from '@/hooks/useReferenceData';
 import { Modal, SearchInput } from '@/components/common';
 import { AccountForm } from '@/features/accounts/AccountForm';
 import { AccountList } from '@/features/accounts/AccountList';
@@ -9,23 +9,21 @@ import styles from './Accounts.module.css';
 
 export default function Accounts() {
   const dispatch = useAppDispatch();
-  const accounts = useAppSelector((s) => s.accounts.items);
+  const { data: accounts = [], isLoading } = useAccounts();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [query, setQuery] = useState('');
   const { formData, handleChange, handleSubmit, resetForm } = useAccountForm(() => {
     setIsModalOpen(false);
   });
 
-  useEffect(() => {
-    dispatch(fetchAccounts());
-  }, [dispatch]);
+  // React Query handles fetching accounts; no manual dispatch needed.
 
   const handleModalClose = () => {
     setIsModalOpen(false);
     resetForm();
   };
 
-  const filtered = accounts.filter(a => a.name.toLowerCase().includes(query.toLowerCase()));
+  const filtered = accounts.filter((a: any) => a.name.toLowerCase().includes(query.toLowerCase()));
 
   return (
     <div className={styles.container}>

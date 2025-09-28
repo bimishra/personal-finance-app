@@ -67,21 +67,21 @@ export const CategoryList: React.FC<CategoryListProps> = ({
           {paged.map((category) => (
             <div key={category.id} className={`${styles.row} ${styles.rowHover}`}>
               <div className={styles.left}>
-                <div className={`${styles.avatar} ${category.type === 'INCOME' ? styles.avatarIncome : styles.avatarExpense}`}>
-                  <div className={`${styles.dot} ${category.type === 'INCOME' ? styles.dotIncome : styles.dotExpense}`} />
-                </div>
                 <div className={styles.meta}>
-                  <div className={styles.name}>{category.name}</div>
+                  <div className={styles.name}>
+                    <span
+                      className={`${styles.typeInlineIcon} ${category.type === 'INCOME' ? styles.typeIncome : styles.typeExpense}`}
+                      title={category.type === 'INCOME' ? 'Income category' : 'Expense category'}
+                      role="img"
+                      aria-label={category.type === 'INCOME' ? 'Income category' : 'Expense category'}
+                    >
+                      {category.type === 'INCOME' ? '↑' : '↓'}
+                    </span>
+                    {category.name}
+                  </div>
                   <div className={styles.desc}>{category.description || ''}</div>
                 </div>
               </div>
-
-              <div className={styles.typeCol}>
-                <span className={`${styles.badge} ${category.type === 'INCOME' ? styles.badgeIncome : styles.badgeExpense}`}>
-                  {category.type === 'INCOME' ? 'Income' : 'Expense'}
-                </span>
-              </div>
-
               <div className={styles.transactionsCol}>
                 {category.transactionCount ? (
                   <span className={styles.txnBadge}>
@@ -92,15 +92,18 @@ export const CategoryList: React.FC<CategoryListProps> = ({
                   <span className={styles.noTxn}>No transactions</span>
                 )}
               </div>
-
               <div className={styles.actionsCol}>
                 <div className={styles.actionsInner}>
-                  <CategoryActions
-                    category={category}
-                    hasTransactions={Boolean(category.transactionCount)}
-                    onDelete={() => onDelete?.(category)}
-                    onUpdate={onUpdate}
-                  />
+                  {!('defaultCategory' in category) || (category as any).defaultCategory === false ? (
+                    <CategoryActions
+                      category={category}
+                      hasTransactions={Boolean(category.transactionCount)}
+                      onDelete={() => onDelete?.(category)}
+                      onUpdate={onUpdate}
+                    />
+                  ) : (
+                    <span className="text-[10px] font-medium text-gray-400" aria-label="System category" title="System category – cannot edit">—</span>
+                  )}
                 </div>
               </div>
             </div>

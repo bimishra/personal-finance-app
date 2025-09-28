@@ -20,6 +20,12 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
     Page<Transaction> findByUserId(UUID userId, Pageable pageable);
     Page<Transaction> findByUserIdAndTxnDateBetween(UUID userId, LocalDate from, LocalDate to, Pageable pageable);
 
+    // Account + user scoped methods (list & pageable)
+    List<Transaction> findByAccountIdAndUserId(UUID accountId, UUID userId);
+    Page<Transaction> findByAccountIdAndUserId(UUID accountId, UUID userId, Pageable pageable);
+    List<Transaction> findByAccountIdAndUserIdAndTxnDateBetween(UUID accountId, UUID userId, LocalDate from, LocalDate to);
+    Page<Transaction> findByAccountIdAndUserIdAndTxnDateBetween(UUID accountId, UUID userId, LocalDate from, LocalDate to, Pageable pageable);
+
     // Aggregates net amount per day (txn_date). Credits are positive, debits negative.
     @Query(value = "SELECT txn_date AS day, SUM(CASE WHEN type = 'CREDIT' THEN amount ELSE -amount END) AS total " +
             "FROM transactions " +
@@ -35,4 +41,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
             "WHERE user_id = :userId AND txn_date >= :from AND txn_date <= :to " +
             "GROUP BY txn_date ORDER BY txn_date", nativeQuery = true)
     List<Object[]> findDailyIncomeExpense(@Param("userId") UUID userId, @Param("from") LocalDate from, @Param("to") LocalDate to);
+
+    // Returns category_id and count of transactions per category for the given user
+    @Query(value = "SELECT category_id, COUNT(*) FROM transactions WHERE user_id = :userId GROUP BY category_id", nativeQuery = true)
+    List<Object[]> findTransactionCountsGroupedByCategory(@Param("userId") UUID userId);
 }

@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/state/hooks';
-import { fetchTransactions, createTransaction, updateTransaction, deleteTransaction } from '@/state/slices/transactionsSlice';
-import { fetchCategories } from '@/state/slices/categoriesSlice';
+import { fetchTransactions, createTransaction, updateTransaction, deleteTransaction, clearAccountFilter } from '@/state/slices/transactionsSlice';
+import { useCategories } from '@/hooks/useReferenceData';
 import { Transaction } from '@/types';
 import { Modal, SearchInput } from '@/components/common';
 import TransactionForm from '@/features/transactions/TransactionForm';
@@ -25,16 +26,25 @@ export default function Transactions() {
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [query, setQuery] = useState('');
   const [localPageSize, setLocalPageSize] = useState(size);
+  const [accountFilter, setAccountFilter] = useState<string>('ALL');
 
-  const loadPage = useCallback((p: number, sz: number) => {
-    dispatch(fetchTransactions({ page: p, size: sz }));
+  const loadPage = useCallback((p: number, sz: number, acct?: string) => {
+    dispatch(fetchTransactions({ page: p, size: sz, accountId: acct && acct !== 'ALL' ? acct : undefined }));
   }, [dispatch]);
 
+  const location = useLocation();
+
+  // On first entry or re-entry always reset to ALL accounts and fetch unfiltered list.
   useEffect(() => {
-    loadPage(page, size);
-    dispatch(fetchCategories());
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch]);
+    setAccountFilter('ALL');
+    dispatch(clearAccountFilter());
+    loadPage(0, localPageSize, 'ALL');
+    return () => {
+      // Cleanup: ensure slice filter is cleared when leaving route.
+      dispatch(clearAccountFilter());
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.key]);
 
   // If the server clamps / alters the actual page size, keep the local selector in sync.
   useEffect(() => {
@@ -44,12 +54,18 @@ export default function Transactions() {
   }, [size, localPageSize]);
 
   const handlePageChange = (p: number) => {
-    loadPage(p, localPageSize);
+    loadPage(p, localPageSize, accountFilter);
   };
 
   const handlePageSizeChange = (sz: number) => {
     setLocalPageSize(sz);
-    loadPage(0, sz);
+    loadPage(0, sz, accountFilter);
+  };
+
+  const handleAccountFilterChange = (acctId: string) => {
+    if (acctId === accountFilter) return; // avoid duplicate fetch when unchanged
+    setAccountFilter(acctId);
+    loadPage(0, localPageSize, acctId);
   };
 
   const handleCreateTransaction = async (transaction: Transaction, keepOpen?: boolean) => {
@@ -132,6 +148,8 @@ export default function Transactions() {
         loading={status === 'loading'}
         onPageChange={handlePageChange}
         onPageSizeChange={handlePageSizeChange}
+        onAccountFilterChange={handleAccountFilterChange}
+        currentAccountId={accountFilter === 'ALL' ? null : accountFilter}
       />
 
       <div className="relative z-50">

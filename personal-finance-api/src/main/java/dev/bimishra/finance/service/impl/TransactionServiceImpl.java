@@ -59,6 +59,37 @@ public class TransactionServiceImpl implements TransactionService {
         return page.map(mapper::toDto);
     }
 
+    // Account-scoped implementations
+    @Override
+    public List<TransactionDto> listByAccount(UUID accountId, UUID userId) {
+        Account acct = accountRepo.findById(accountId).orElseThrow(() -> new ResourceNotFoundException("Account not found"));
+        if (!acct.getUserId().equals(userId)) throw new ResourceNotFoundException("Account not found for user");
+        return repo.findByAccountIdAndUserId(accountId, userId).stream().map(mapper::toDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TransactionDto> listByAccountBetween(UUID accountId, UUID userId, LocalDate from, LocalDate to) {
+        Account acct = accountRepo.findById(accountId).orElseThrow(() -> new ResourceNotFoundException("Account not found"));
+        if (!acct.getUserId().equals(userId)) throw new ResourceNotFoundException("Account not found for user");
+        return repo.findByAccountIdAndUserIdAndTxnDateBetween(accountId, userId, from, to).stream().map(mapper::toDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<TransactionDto> listByAccount(UUID accountId, UUID userId, Pageable pageable) {
+        Account acct = accountRepo.findById(accountId).orElseThrow(() -> new ResourceNotFoundException("Account not found"));
+        if (!acct.getUserId().equals(userId)) throw new ResourceNotFoundException("Account not found for user");
+        Page<Transaction> page = repo.findByAccountIdAndUserId(accountId, userId, pageable);
+        return page.map(mapper::toDto);
+    }
+
+    @Override
+    public Page<TransactionDto> listByAccountBetween(UUID accountId, UUID userId, LocalDate from, LocalDate to, Pageable pageable) {
+        Account acct = accountRepo.findById(accountId).orElseThrow(() -> new ResourceNotFoundException("Account not found"));
+        if (!acct.getUserId().equals(userId)) throw new ResourceNotFoundException("Account not found for user");
+        Page<Transaction> page = repo.findByAccountIdAndUserIdAndTxnDateBetween(accountId, userId, from, to, pageable);
+        return page.map(mapper::toDto);
+    }
+
     @Override
     public TransactionDto get(UUID id, UUID userId) {
         Transaction t = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));

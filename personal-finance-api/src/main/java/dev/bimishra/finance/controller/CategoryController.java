@@ -2,6 +2,7 @@ package dev.bimishra.finance.controller;
 
 import dev.bimishra.finance.config.UserPrincipal;
 import dev.bimishra.finance.dto.CategoryDto;
+import dev.bimishra.finance.dto.CategoryWithCountDto;
 import dev.bimishra.finance.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,11 @@ public class CategoryController {
     @GetMapping
     public ResponseEntity<List<CategoryDto>> list() {
         return ResponseEntity.ok(svc.findAllForUser());
+    }
+
+    @GetMapping("{include=counts}")
+    public ResponseEntity<List<CategoryWithCountDto>> listWithTransactionCounts() {
+        return ResponseEntity.ok(svc.listWithTransactionCounts());
     }
 
     @GetMapping("/{id}")

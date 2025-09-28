@@ -1,10 +1,18 @@
 import React from 'react'
 import styles from './Modal.module.css'
 
-export default function Modal({ open, onClose, title, children }: { open: boolean; onClose: () => void; title?: string; children?: React.ReactNode }) {
+interface ModalProps {
+  open: boolean;
+  onClose: () => void;
+  title?: string;
+  children?: React.ReactNode;
+  layer?: 'base' | 'top';
+}
+
+export default function Modal({ open, onClose, title, children, layer = 'base' }: ModalProps) {
   if (!open) return null
   return (
-    <div className={styles.backdrop}>
+    <div className={`${styles.backdrop} ${layer === 'top' ? styles.backdropTop : ''}`}> 
       <div className={styles.center}>
         <div className={styles.overlay}></div>
         <div className={styles.panel}>

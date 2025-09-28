@@ -16,6 +16,8 @@ interface TransactionListProps {
   loading?: boolean;
   onPageChange?: (page: number) => void; // expects zero-based
   onPageSizeChange?: (size: number) => void;
+  onAccountFilterChange?: (accountId: string) => void;
+  currentAccountId?: string | null;
 }
 
 export const TransactionList: React.FC<TransactionListProps> = ({
@@ -29,7 +31,9 @@ export const TransactionList: React.FC<TransactionListProps> = ({
   last = true,
   loading = false,
   onPageChange,
-  onPageSizeChange
+  onPageSizeChange,
+  onAccountFilterChange,
+  currentAccountId
 }) => {
   // Fallback-derived total pages if server value seems incorrect
   const derivedTotalPages = totalPages && totalPages > 0 ? totalPages : (size > 0 ? Math.max(1, Math.ceil(totalElements / size)) : 1);
@@ -69,7 +73,13 @@ export const TransactionList: React.FC<TransactionListProps> = ({
         </div>
       ) : (
         <div className={styles.tableCard}>
-          <TransactionTable transactions={transactions} onEdit={onEdit} onDelete={onDelete} />
+          <TransactionTable
+            transactions={transactions}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            onAccountFilterChange={onAccountFilterChange}
+            currentAccountId={currentAccountId}
+          />
         </div>
       )}
 

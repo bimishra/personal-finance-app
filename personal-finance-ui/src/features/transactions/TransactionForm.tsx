@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAppSelector, useAppDispatch } from '@/state/hooks';
-import { fetchAccounts } from '@/state/slices/countSlice';
+import { useAccounts } from '@/hooks/useReferenceData';
 import { Transaction } from '@/types';
 import dayjs from 'dayjs';
 import { Modal } from '@/components/common';
@@ -35,8 +35,9 @@ export default function TransactionForm({
   const effectiveOnSubmit = onSubmit || ((data: Transaction) => onSave?.(data));
   const effectiveOnClose = onClose || onCancel;
   const dispatch = useAppDispatch();
-  const accounts = useAppSelector(s => s.accounts.items)
-  const accountsStatus = useAppSelector(s => (s as any).accounts.status as 'idle' | 'loading' | 'succeeded' | 'failed');
+  const { data: accountData = [], isLoading: accountsLoading, isError: accountsError } = useAccounts();
+  const accounts = accountData;
+  const accountsStatus: 'idle' | 'loading' | 'succeeded' | 'failed' = accountsLoading ? 'loading' : (accountsError ? 'failed' : (accounts.length ? 'succeeded' : 'idle'));
   const categories = useAppSelector(s => s.categories.items)
 
   const defaultValues = (): Transaction => ({
@@ -79,12 +80,8 @@ export default function TransactionForm({
       setForm(init);
       setKind(deriveKind(init));
       setKeepOpen(false);
-      // Ensure accounts are loaded when modal opens
-      if ((accountsStatus === 'idle' || accounts.length === 0) ) {
-        dispatch(fetchAccounts());
-      }
     }
-  }, [open, effectiveInitialValues, accountsStatus, accounts.length, dispatch]);
+  }, [open, effectiveInitialValues]);
 
   // If accounts finished loading and form has no account selected, set default
   useEffect(() => {
@@ -183,13 +180,13 @@ export default function TransactionForm({
                   disabled={accountsStatus !== 'succeeded' || accounts.length === 0}
                 >
                   <option value="">{accounts.length === 0 ? 'No accounts found' : 'Select account'}</option>
-                  {accounts.map(a => (
+                  {accounts.map((a: any) => (
                     <option key={a.id} value={a.id}>{a.name}</option>
                   ))}
                 </select>
               )}
               {accountsStatus === 'failed' && (
-                <div className="mt-1 text-[10px] text-red-600">Failed to load accounts. <button type="button" className="underline" onClick={() => dispatch(fetchAccounts())}>Retry</button></div>
+                <div className="mt-1 text-[10px] text-red-600">Failed to load accounts. <span className="underline cursor-pointer" onClick={() => { /* React Query will refetch on focus or manual invalidate if needed */ }}>Retry</span></div>
               )}
             </div>
           </div>
